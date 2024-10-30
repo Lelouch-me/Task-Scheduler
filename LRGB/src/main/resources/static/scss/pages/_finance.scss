@@ -1,0 +1,194 @@
+.finance-tab {
+    width: $width-full;
+    .nav-tabs {
+        background: #DFD5E9 !important;
+        border-top-left-radius: 5px !important;
+        border-top-right-radius: 5px !important;
+        li.nav-item {
+            width: 50% !important;
+            button {                
+                border-top-left-radius: 5px !important;
+                border-top-right-radius: 5px !important;
+                width: 100% !important;
+                padding: 13px 0px;
+                color: #36234A !important;
+                font-size: 1.4rem;
+                font-family: "Copperplate-Bold" !important;
+                &.active {
+                    background: #533870 !important;
+                    border: none !important;
+                    color: $white-color !important;
+                    border-bottom: 1px solid #533870 !important;
+                }
+            }
+        }
+    }
+    .tab-content {
+        &.finance {
+            width: $width-full;
+            background: $white-color !important;
+            box-shadow: 0 0 3px 1px rgba(0,0,0,0.10) !important;
+            border-bottom-left-radius: 5px !important;
+            border-bottom-right-radius: 5px !important;
+            padding: 1rem !important;
+        }
+        .basic-form {
+            width: $width-full;
+        }
+    }
+    .customize {
+        width: $width-full;
+        .finance-form {
+            width: 100%;
+            padding: 0.5rem;
+            .form-text {
+                color: $blue-info !important;
+                font-size: 0.7rem !important;
+            }
+        }        
+        .finance-tab {
+            .nav-tabs {
+                background: #DFD5E9 !important;
+                border-top-left-radius: 5px !important;
+                border-top-right-radius: 5px !important;
+                li.nav-item {
+                    width: 50% !important;
+                    button {                
+                        border-top-left-radius: 5px !important;
+                        border-top-right-radius: 5px !important;
+                        width: 100% !important;
+                        padding: 13px 0px;
+                        color: #36234A !important;
+                        font-size: 1.2rem;
+                        font-family: "Copperplate-Bold" !important;
+                        &.active {
+                            background: #533870 !important;
+                            border: none !important;
+                            color: $white-color !important;
+                        }
+                    }
+                }
+            }
+            .tab-content {
+                padding: 15px !important;
+                .tab-pane {
+                    padding: 0.5rem !important;
+                    .notification {
+                        width: $width-full;
+                        background: $light-blue;
+                        padding: 0.7rem;
+                        margin-bottom: 1rem;
+                        border-radius: 0.25rem;
+                    }
+                    .blue-text {
+                        display: inline-flex;
+                        width: 90%;
+                        color: $dark-brown-color;
+                        font-size: 1.11rem;
+                    }
+                    .info {
+                        border-radius: 100% !important;
+                        height: 32px;
+                        width: 32px;
+                        text-align: center;
+                        &:hover {
+                            i {
+                                color: $white-color !important;
+                            }
+                        }
+                        i {
+                            color: #0d6efd;
+                            font-size: 1.1rem !important;
+                        }
+                    }
+                    .finance-form {
+                        input.form-control {
+                            position: relative !important;
+                            top: 10px !important;
+                        }
+                        .sub-text {
+                            width: $width-full;
+                            display: flex;
+                            flex-direction: row;
+                            span {
+                                display: inline-flex;                        
+                                font-size: 0.726rem;
+                                &.blue-text {
+                                    align-items: flex-start;
+                                    justify-content: flex-start;
+                                    color: $blue-info;
+                                    width: 60%;
+                                }
+                                &.green-text {
+                                    align-items: flex-end;
+                                    justify-content: flex-end;
+                                    color: $green-color;
+                                    width: 40%;
+                                }
+                            }
+                        }
+                    }
+                    .table-content {
+                        height: 350px;
+                        table {
+                            font-size: 0.89rem !important;
+                        }
+                    }
+                    .modal-title {
+                        color: $black-color !important;
+                        font-size: 1.2rem !important;
+                    }
+                    .modal-body {
+                        form {
+                            width: $width-full;
+                        }
+                    }
+                    .more-button-content {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin: 1rem 0;
+                    }             
+                }
+            }
+        }
+    }
+}
+
+.evaluate {
+    width: $width-full;
+    .stock-card-body {
+        padding: 15px 0 !important;
+        ul.simulation {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: $width-full;
+            li {
+                display: flex;
+                flex-direction: row;
+                width: $width-full;
+                margin-bottom: 0.8rem;
+                &:last-child {
+                    margin-bottom: 0 !important; 
+                }
+                span {
+                    display: inline-flex;
+                    width: $width-full;
+                    &.data {
+                        width: 80%;
+                        text-align: left;
+                        font-size: 1.1rem;
+                    }
+                    &.value {
+                        width: 20%;
+                        justify-content: flex-end;
+                        font-size: 1rem;
+                        font-weight: bold;
+                        padding-right: 30px;
+                    }
+                }
+            }
+        }
+    }
+}

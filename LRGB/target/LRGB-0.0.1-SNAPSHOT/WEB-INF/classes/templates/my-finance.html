@@ -1,0 +1,770 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG My Finance</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/slick.min.css" />
+    <link rel="stylesheet" href="css/slick-theme.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="scss/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <style>
+        .tooltip-inner {
+            max-width: 300px !important;
+            padding: 0.79rem 0.99rem !important;
+        }
+    </style>
+    
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+</head>
+
+<body>
+
+	<!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends! -->
+    
+    <div class="content"></div>
+    <!--Header Panel-->
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="main-nav">
+        <div class="container">
+            <a class="navbar-brand" href="javascript:void(0)"><img src="images/logo.png" alt="" title=""/></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mynavbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/who-we-are/">Who We Are</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/mutual-fund/">What We Do</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/funds/">Funds</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/insights/">Insights & Article</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/press-room/">Press Releases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/gallery/">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/events/">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/unpaid/">Cmsf</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Analyzer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/login/">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="header-area">
+    	<div class="logo-stock-area">
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-lg-3 col-md-5 col-sm-4">
+                        <div class="head-top-date-area" id="curDateTime"></div>
+                        <div class="align-items-center">
+                            <div class="d-flex justify-content-start">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" style="font-size:13px; padding-top:1.5%" class="bg-danger pointer btn-dse">DSE</button>                                    
+                                        <button type="button" class="" th:classappend="${marketOpen} ? 'btn btn-success no-btn' : 'btn btn-danger no-btn'" 
+                                        	th:text="${marketOpen} ? 'OPEN' : 'CLOSED'"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-7 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo" class="position-relative">
+                                            <li class="" th:each = "ticker: ${tickerData}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate">
+                                                    <a th:href="@{/company/{code}(code=${ticker.code})}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p> 
+                                                            	<img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	<img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg nav-menu-area">
+            <div class="container">
+                <a href="https://www.youtube.com/c/LRGlobalBangladeshChannel" class="youtube" title="Go to Our Youtube Channel" target="_blank">
+                    <i class="fa fa-play"></i>
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">
+                                <img class="normal-menu-icon img-fluid" src="images/home-icon.png" alt="Home Icon">
+                                <img class="hover-menu-icon img-fluid" src="images/home-icon-hover.png" alt="Home Icon"> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/increase-graph-profit.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/increase-graph-profit-hover.png" alt=""> Markets
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/equity_market">Equity Market</a></li>
+                                <li><a class="dropdown-item" href="/debt_board">Debt Board</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/economy" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-hover.png" alt=""> Economy
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/research" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy-grow.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-grow-hover.png" alt=""> Research
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/stock_analysis" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/stock-analysis.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/stock-analysis-hover.png" alt=""> Analysis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/my_finance" role="button">
+                                <img class="normal-menu-icon img-fluid" src="images/my-finance-icon.png" alt="My Finance">
+                                <img class="hover-menu-icon img-fluid" src="images/my-finance-icon-hover.png" alt="My Finance"> My Finance
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="d-flex search-form-container" method="GET" action="/companyBySearch" autocomplete="off">
+                        <div class="position-relative autocomplete">
+                            <input class="form-control search-input me-2" type="search" id="myInput"
+                            	placeholder="Search" aria-label="Search" name="ticker">
+                            <button id="myButton"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!--Header Panel-->
+
+    <!-- page name panel -->
+    <section class="company-top-area">
+        <div class="container">
+            <div class="compny-top-inner mt-3">
+                <ul class="d-flex">
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid" width="36" height="33" src="images/market-map-icon.png" alt="">
+                            <span>
+                                <strong>Financial Plan</strong>
+                            </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- page name panel -->
+    
+    <!-- finance content section -->
+    <section class="total-chart-table-area">
+        <div class="container">
+            <div class="row align-items-stretch justify-content-center mb-4">
+                <div class="finance-tab">
+                    <ul class="nav nav-tabs" id="mainTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                                role="tab" aria-controls="home" aria-selected="true" onClick="resetCustomizedValues()">Basic</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" 
+                            aria-selected="false" onclick="resetBasicValues()">Customize</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content finance" id="myTabContent">
+                        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                            <form name="" action="" class="basic-form">
+                                <div class="mb-3 row">
+                                    <label for="" class="col-sm-9 col-form-label">Your Current Age</label>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" id="b_age" min="0" placeholder="" value="30" oninput="validity.valid||(value='');">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="" class="col-sm-9 col-form-label">At what age are you want to stop working ?</label>
+                                    <div class="col-sm-3">
+                                        <input type="number" class="form-control" oninput="validity.valid||(value='');changeBasicRetAge()" id="basic_retirement_age" 
+                                        	min="0" placeholder="" value="60">
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="" class="col-sm-9 col-form-label">
+                                        How much income you want per year when you stop working at the age of <span id="b_ret_age" class="text-green fw-bold">60</span> ? (BDT ৳)
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <!--  <input type="text" class="form-control" id="b_expected_income" value="7,00,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')">-->
+                                        <select id="b_expected_income" class="form-select" aria-label="Default select example"></select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="" class="col-sm-9 col-form-label">
+                                        How much investment you can make upfront today? (BDT ৳)
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <!--  <input type="text" class="form-control" id="b_initial_investment" value="1,00,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')">-->
+                                        <select id="b_initial_investment" class="form-select" aria-label="Default select example"></select>
+                                    </div>
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="" class="col-sm-9 col-form-label">
+                                        How much you can contribute per year before you stop working at the age of <span id="b_ret_age2" class="text-green fw-bold">60</span> ? (BDT ৳)
+                                    </label>
+                                    <div class="col-sm-3">
+                                        <!--  <input type="text" class="form-control" id="b_yearly_investment" value="24,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')">-->
+                                        <select id="b_yearly_investment" class="form-select" aria-label="Default select example"></select>
+                                    </div>
+                                </div>
+                            </form>                            
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                            <div class="customize">
+                                <div class="row align-items-stretch justify-content-center">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="stock-card-panel">
+                                            <div class="stock-card-header d-flex justify-content-center align-items-center">
+                                                <h2>Investor Info</h2>
+                                            </div>
+                                            <div class="stock-card-body">
+                                                <form name="" action="" class="finance-form">
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">Investor Age</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="number" min="0" oninput="validity.valid||(value='');" class="form-control" id="c_age" value="30" >
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">
+                                                            Target Leisure Age (Or Retirement)<br>
+                                                            <span class="form-text">Age when you plan to Materially Increase Leisure Time</span>
+                                                        </label>
+                                                        <div class="col-sm-6">
+                                                            <input type="number" min="0" class="form-control" id="c_retirement_age" value="60" 
+                                                            	oninput="validity.valid||(value='');changeContributionWithdrawlPeriod()">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">Gender</label>
+                                                        <div class="col-sm-6">
+                                                            <select id="c_gender" class="form-select" aria-label="Default select example">
+                                                                <option selected value="Male">Male</option>
+                                                                <option value="Female">Female</option>
+                                                                <option value="Non-binary">Non-binary</option>
+                                                                <option value="Transgender">Transgender</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">Spouse</label>
+                                                        <div class="col-sm-6">
+                                                            <select id="c_spouse" class="form-select" aria-label="Default select example" onchange="disableSpouseAge()">
+                                                                <option selected value="None">None</option>
+                                                                <option value="Male">Male</option>
+                                                                <option value="Female">Female</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">Spouse's Age</label>
+                                                        <div class="col-sm-6">
+                                                            <input type="number" min="0" class="form-control" id="c_spouse_age">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3 row">
+                                                        <label for="" class="col-sm-6 col-form-label">Initial Investment (BDT ৳)</label>
+                                                        <div class="col-sm-6">
+                                                            <!-- <input type="text" class="form-control" id="c_initial_investment" value="1,00,000" 
+                                                            	oninput="this.value = this.value.replace(/[^0-9,]/g, '')"> -->
+                                                            	<select id="c_initial_investment" class="form-select" aria-label="Default select example"></select>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="stock-card-panel finance-tab">
+                                        	<div class="stock-card-header d-flex justify-content-center align-items-center">
+                            					<h2>Contribution/Withdrawal</h2>
+                        					</div>
+                                            <ul class="nav nav-tabs" id="cwTab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active" id="annual-tab" data-bs-toggle="tab" data-bs-target="#annual"
+                                                        type="button" role="tab" aria-controls="annual" aria-selected="true" onclick="removeTableData()">Annual (Quick
+                                                        Analysis)</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link" id="schedule-tab" data-bs-toggle="tab" data-bs-target="#schedule"
+                                                        type="button" role="tab" aria-controls="schedule" aria-selected="false">Schedule (Detailed & Itemized)</button>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content" id="myTabContent">
+                                                <div class="tab-pane fade show active" id="annual" role="tabpanel" aria-labelledby="annual-tab">
+                                                    <div class="notification">
+                                                        <span class="blue-text">Annual Contribution/Withdrawal Amount (BDT ৳)</span>
+                                                        <button type="button" class="btn btn-outline-primary info" data-bs-toggle="tooltip"
+                                                            data-bs-placement="top" data-bs-html="true"
+                                                            title="Positive value means contribution,<br/> Negative value means withdrawl.">
+                                                            <i class="fa fa-info" aria-hidden="true"></i>
+                                                        </button>
+                                                    </div>
+                                                    <form name="" action="" class="finance-form">
+                                                        <div class="mb-3 row">
+                                                            <label for="" class="col-sm-8 col-form-label">
+                                                                Short Term Contribution (+)
+                                                                <div class="sub-text">
+                                                                    <span class="blue-text">Less Than 1 Year</span>
+                                                                    <span id="shortTermPeriod" class="green-text">From Now to December 2022</span>
+                                                                </div>
+                                                            </label>
+                                                            <div class="col-sm-4">
+                                                                <!-- <input type="text" class="form-control" id="shortTerm" value="15,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')">-->
+                                                                <select id="shortTerm" class="form-select" aria-label="Default select example"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3 row">
+                                                            <label for="" class="col-sm-8 col-form-label">
+                                                                Medium Term Contribution (Per Year)
+                                                                <div class="sub-text">
+                                                                    <span class="blue-text">More Than 1 Year & Before Leisure Time</span>
+                                                                    <span id="midTermPeriod" class="green-text">From 2023 To 2052</span>
+                                                                </div>
+                                                            </label>
+                                                            <div class="col-sm-4">
+                                                                <!--  <input type="text" class="form-control" id="midTerm" value="24,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')">-->
+                                                                <select id="midTerm" class="form-select" aria-label="Default select example"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3 row">
+                                                            <label for="" class="col-sm-8 col-form-label">
+                                                                Long Term Withdrawl (Per Year)
+                                                                <div class="sub-text">
+                                                                    <span class="blue-text">Leisure Time</span>
+                                                                    <span id="longTermPeriod" class="green-text">From 2058 To 2107</span>
+                                                                </div>
+                                                            </label>
+                                                            <div class="col-sm-4">
+                                                                <!-- <input type="text" class="form-control" id="longTerm" value="7,00,000" oninput="this.value = this.value.replace(/[^0-9,]/g, '')"> -->
+                                                                <select id="longTerm" class="form-select" aria-label="Default select example"></select>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+                                                    <div class="table-content">
+                                                        <table id="cwTable" class="table table-striped table-hover table-responsive table-bordered">
+                                                            <thead>
+                                                              <tr>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Annual Amount (৳)</th>
+                                                                <th scope="col">Start Year</th>
+                                                                <th scope="col">End Year</th>
+                                                              </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            </tbody>
+                                                          </table>
+                                                    </div>
+                                                    <div class="more-button-content">
+                                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                            <i class="fa fa-plus-circle"></i> &nbsp;Add More
+                                                        </button>
+                                                    </div>
+                                                    <!-- Modal form starts -->
+                                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel">Contribution/Withdrawal Schedule</h5>
+                                                                    <button type="button" onClick="clearField()" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form name="" action="">
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Select Term</label>
+                                                                            <div class="col-sm-8">
+                                                                                <select id="termSelection" class="form-select" aria-label="Default select example" 
+                                                                                	onchange="changeContributionWithdrawlPeriod()">
+                                                                                    <option selected value="1">Short Term</option>
+                                                                                    <option value="2">Medium Term</option>
+                                                                                    <option value="3">Long Term</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Start Year</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="text" class="form-control" id="termStartYear" value="2022" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">End Year</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="text" class="form-control" id="termEndYear" value="2022" readonly>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Name</label>
+                                                                            <div class="col-sm-8">
+                                                                                <input type="text" class="form-control" id="cwName" placeholder="">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Type</label>
+                                                                            <div class="col-sm-8">
+                                                                                <select id="typeSelection" class="form-select" aria-label="Default select example">
+                                                                                    <option selected value="1">Contribution</option>
+                                                                                    <option value="2">Withdrawal</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Amount</label>
+                                                                            <div class="col-sm-8">
+                                                                                <!--<input type="number" min="0" class="form-control" id="cwAmount" placeholder="000"> -->
+                                                                                <select id="cwAmount" class="form-select" aria-label="Default select example"></select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mb-3 row">
+                                                                            <label for="" class="col-sm-4 col-form-label">Frequency</label>
+                                                                            <div class="col-sm-8">
+                                                                                <select id="frequencySelection" class="form-select" aria-label="Default select example">
+                                                                                    <option selected value="1">Annual</option>
+                                                                                    <option value="2">Monthly</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" onClick="clearField()" data-bs-dismiss="modal">Close</button>
+                                                                    <button type="button" class="btn btn-primary" onClick="addTableRow()">Add</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Modal form ends! -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row align-items-stretch">
+                <div class="col-lg-12 col-md-12 col-sm-12 justify-content-center align-items-center text-center mb-4">
+                    <button type="button" class="btn btn-primary btn-lg" id="result_button">Evaluate</button>
+                </div>
+            </div>
+            <div class="text-center" id="spinner" style="display: none;">
+  				<div class="spinner-border" role="status">
+    				<span class="visually-hidden">Loading...</span>
+  				</div>
+			</div>
+        </div>
+    </section>
+    <!-- finance content section Ends! -->
+
+	
+    <!-- Evaluate search section starts -->
+    <section class="total-chart-table-area evaluate" id="result_section" style="display: none;">
+        <div class="container">
+            <div class="row align-items-stretch justify-content-center mb-4">
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-center align-items-center">
+                            <h2>Simulation Summary</h2>
+                        </div>
+                        <div class="stock-card-body">
+                            <ul class="simulation">
+                                <li>
+                                    <span class="data">Number Of Years Of Earnings (Post Retirement)</span>
+                                    <span class="value" id="yearsOfEarnings"></span>
+                                </li>
+                                <li>
+                                    <span class="data">Expected Shortfall (৳)</span>
+                                    <span class="value" id="expShortfall"></span>
+                                </li>
+                                <li>
+                                    <span class="data">Shortfall Likelihood</span>
+                                    <span class="value" id="shortfallLProbability"></span>
+                                </li>
+                                <li>
+                                    <span class="data">Target Return</span>
+                                    <span class="value" id="targetRet"></span>
+                                </li>
+                                <li>
+                                    <span class="data">Expected Volatility</span>
+                                    <span class="value" id="expVolatility"></span>
+                                </li>
+                                <li>
+                                    <span class="data">Average Residual Wealth (mn BDT)</span>
+                                    <span class="value" id="avgResWealth"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-center align-items-center">
+                            <h2>Asset Value (Simulated Distribution)</h2>
+                        </div>
+                        <div class="stock-card-body">
+							<div class="panel-content text-center">
+                                <div id="asset_value"></div>
+                            </div>
+						</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-center align-items-center">
+                            <h2>Default Portfolio</h2>
+                        </div>
+                        <div class="stock-card-body">
+							<div class="panel-content text-center">
+                                <div id="invest_plan_pie_chart"></div>
+                            </div>
+						</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 mb-4">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-center align-items-center">
+                            <h2>Default Portfolio</h2>
+                        </div>
+                        <div class="stock-card-body">
+							<table class="table table-striped">
+								<thead>
+    								<tr>
+      									<th scope="col">Ticker</th>
+      									<th scope="col">Investment</th>
+    								</tr>
+  								</thead>
+  								<tbody id="tickerTableBody">
+      							</tbody>
+							</table>
+						</div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </section>
+    <!-- Evaluate search section ends! -->
+    
+    
+    <!--Footer Panel-->
+    <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--Footer Panel-->
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/acmeticker.min.js"></script>
+    <script src="js/endlessRiver.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="js/myFinanceFunction.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="js/customChart.js"></script>
+    <script type="text/javascript">
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+    <script>
+    	setInterval(function(){
+			var ct = new Date();
+			document.getElementById("curDateTime").innerHTML = ct.getDate()+' '+ct.toLocaleString('en-us', { month: 'short' })
+			+' '+ct.toLocaleString('en-us', { year: 'numeric' })+',  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+ 		}, 1000);
+    </script>
+    <script type="text/javascript">   	
+    	disableSpouseAge();
+    	populateAllSelectBox();
+    	
+    	$("#result_button").on("click", function(){
+    		document.getElementById('spinner').style.display = 'block';
+    		document.getElementById("result_button").disabled = true;
+    		document.getElementById("result_section").style.display = "none";
+    		setTimeout(evaluateResultsForMyFinance,0);
+    	});   	
+    	
+    	function evaluateResultsForMyFinance(callback){
+    		var resultObj = processInputJSON();
+    		var modifiedPriceDtls = resultObj.modifiedPriceDtls;
+    		var m_age = resultObj.m_age;
+    		var r_age = resultObj.r_age;
+    		
+    		produceSimulationSummary(modifiedPriceDtls,m_age,r_age);
+        	
+            if(modifiedPriceDtls.assetValuePerSimulationList!=null && modifiedPriceDtls.assetValuePerSimulationList.length>1){
+            	var ageArray = getAgeArray(modifiedPriceDtls,m_age);
+                drawSimulationChart(modifiedPriceDtls.assetValuePerSimulationList,ageArray,parseInt(r_age)-parseInt(m_age));
+                    
+                const sortable = producePortfolioTable(modifiedPriceDtls);        
+                var pieDataArray = getPieDataArray(modifiedPriceDtls,sortable);       	
+                drawPieChartForMyFinance(pieDataArray);
+                
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById("result_section").style.display = "block";
+                document.getElementById("result_button").disabled = false;                  	
+            }
+    	}
+    </script>
+</body>
+</html>

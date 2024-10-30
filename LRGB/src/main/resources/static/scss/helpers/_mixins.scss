@@ -1,0 +1,96 @@
+//********** Mixins **********//
+@mixin select-none {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+@mixin object-fit-cover {
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+@mixin object-fit-contain {
+    -o-object-fit: contain;
+    object-fit: contain;
+}
+@mixin line-clamb-4 {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+@mixin line-clamb-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+@mixin line-clamb-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+@mixin no-appearance {
+    -webkit-appearance: none;
+    appearance: none;
+}
+@mixin border-radius($radius) {
+	border-radius: $radius;
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+}
+@mixin gradient($color1, $color2) {
+	background-color: $color1;
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#{$color1}, endColorstr=#{$color2});
+	background-image: -moz-linear-gradient(center top, $color1, $color2);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from($color1), to($color2));
+}
+@mixin box-shadow($left, $top, $radius, $color) {
+	box-shadow: $left $top $radius $color;
+	-webkit-box-shadow: $left $top $radius $color;
+	-moz-box-shadow: $left $top $radius $color;
+}
+@mixin transition {
+	-webkit-transition: all .3s ease-in-out;
+    -moz-transition:    all .3s ease-in-out;
+    -o-transition:      all .3s ease-in-out;
+    -ms-transition:     all .3s ease-in-out;
+    transition:         all .3s ease-in-out;
+}
+@mixin background-opacity($color, $opacity) {
+    background: $color;
+    background: rgba($color, $opacity);
+}
+@mixin d-flex {
+    display:-webkit-flex;
+    display: flex;
+}
+@mixin a-i-center {
+    -webkit-align-items:center;
+    align-items: center;
+}
+@mixin j-c-between {
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+@mixin j-c-around {
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+}
+@mixin flex-item-content-center {
+    display:-webkit-flex;
+    display: flex;
+    -webkit-align-items:center;
+    align-items: center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+@mixin border-box{
+    -webkit-box-sizing: border-box; 
+    -moz-box-sizing: border-box; 
+    box-sizing: border-box;
+}
+//********** Mixins **********//

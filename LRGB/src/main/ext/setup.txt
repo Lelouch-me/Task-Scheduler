@@ -1,0 +1,20 @@
+which python3 				## /usr/bin/python3
+python3 --version 			## Python 3.6.9
+
+## Needs minimum python3.7 so install if missing and use it directly
+apt install python3-pymysql
+
+## Tried the following but not worked. Leaving here in case needed later. For fresh setup, ignore these commented lines
+## pip install arch
+## apt install python3-numpy
+## sudo -H /usr/bin/python3.7 -m pip uninstall numpy
+## sudo apt purge python3-numpy
+
+sudo -H /usr/bin/python3.7 -m pip install --upgrade pip
+sudo -H /usr/bin/python3.7 -m pip install numpy
+sudo -H /usr/bin/python3.7 -m pip install pandas
+sudo -H /usr/bin/python3.7 -m pip install arch
+sudo -H /usr/bin/python3.7 -m pip install scikit-learn
+
+
+/usr/bin/python3.7 /opt/tomcat/apache-tomcat-9.0.58/lrg/forecasting.py EBL 10 2023-01-01 2024-03-28

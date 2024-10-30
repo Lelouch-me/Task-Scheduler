@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Market Tree Map</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/slick.min.css" />
+    <link rel="stylesheet" href="css/slick-theme.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="scss/style.css">
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+    <script type="text/javascript">
+	    setInterval(function(){
+	    	var ct = new Date();
+	        document.getElementById("curDateTime").innerHTML = ct.getDate()+' '+ct.toLocaleString('en-us', { month: 'short' })
+	        +' '+ct.toLocaleString('en-us', { year: 'numeric' })+',  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+	        document.getElementById("curTime").innerHTML = 'Time:  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+	    }, 1000);
+    </script>
+</head>
+<body>    
+    <!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends! -->
+    
+    <!-- Header Panel -->
+    <header class="header-area">
+        <div class="header-top-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8 col-md-7 col-sm-6 col-xs-6">
+                    	<div class="head-top-date-area" id="curDateTime"></div>
+                    </div>
+                    <div class="col-lg-4 col-md-5 col-sm-6 col-xs-6">
+                        <div class="row align-items-center">
+                            <div class="col-12">
+                                <div class="d-flex justify-content-end stock-status">
+                                    <div class="btn-group" role="group" aria-label="Basic mixed styles example"> 
+                                        <button type="button" class="bg-danger pointer btn-dse">DSE</button>                                    
+                                        <button type="button" class="" th:classappend="${marketOpen} ? 'btn btn-success no-btn' : 'btn btn-danger no-btn'" 
+                                        	th:text="${marketOpen} ? 'OPEN' : 'CLOSED'"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logo-stock-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <h1 class="logo-area">
+                            <a href="/">
+                                <img class="img-fluid" width="158" height="68" src="images/logo.png" alt="Logo">
+                            </a>
+                        </h1>
+                    </div>
+                    <div class="col-lg-9 col-md-9 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo" class="position-relative">
+                                            <li class="" th:each = "ticker: ${tickerData}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate">
+                                                    <a th:href="@{/company/{code}(code=${ticker.code})}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p>
+                                                            	 <img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	 <img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg nav-menu-area">
+            <div class="container">
+            	<a href="https://www.youtube.com/c/LRGlobalBangladeshChannel" class="youtube" title="Go to Our Youtube Channel" target="_blank">
+                    <i class="fa fa-play"></i>
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">
+                                <img class="normal-menu-icon img-fluid" src="images/home-icon.png" alt="Home Icon">
+                                <img class="hover-menu-icon img-fluid" src="images/home-icon-hover.png" alt="Home Icon"> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/increase-graph-profit.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/increase-graph-profit-hover.png" alt=""> Markets
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/equity_market">Equity Market</a></li>
+                                <li><a class="dropdown-item" href="/debt_board">Debt Board</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/economy" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-hover.png" alt=""> Economy
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/research" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy-grow.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-grow-hover.png" alt=""> Research
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/stock_analysis" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/stock-analysis.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/stock-analysis-hover.png" alt=""> Analysis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my_finance" role="button">
+                                <img class="normal-menu-icon img-fluid" src="images/my-finance-icon.png" alt="My Finance">
+                                <img class="hover-menu-icon img-fluid" src="images/my-finance-icon-hover.png" alt="My Finance"> My Finance
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="d-flex search-form-container" method="GET" action="/companyBySearch" autocomplete="off">
+                        <div class="position-relative autocomplete">
+                            <input class="form-control search-input me-2" type="search" id="myInput"
+                            	placeholder="Search" aria-label="Search" name="ticker">
+                            <button id="myButton"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Header Panel -->
+
+    <section class="company-top-area">
+        <div class="container-fluid">
+            <div class="compny-top-inner">
+                <ul class="d-flex">
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid" src="images/market-map-icon.png">
+                            <span><strong>Market Tree Map</strong></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="stock-xchnge-area">
+        <div class="container-fluid">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-12">
+                    <h2>Dhaka Stock Exchange</h2>
+                    <ul class="d-flex">
+                        <li th:text = "'Date: ' +${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></li>
+                        <!--  <li th:text = "'Time: ' +${#dates.format(#dates.createNow(), 'hh:mm a')}"></li>-->
+                        <li id ="curTime"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="total-chart-table-area stck-exchnge-table-area">
+    <div class="container-fluid">
+    	<div class="stock-card-panel">
+    		<div class="stock-card-header d-flex justify-content-between align-items-center">
+        		<h2>
+            	Tree Map
+           		</h2>
+            	<select class="bg-theme pointer tree-select" id="treemap-select">
+            	<option value="val">Value</option>
+                <option value="vol">Volume</option>
+                <option value="mcap">MarketCap</option>
+            </select>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item val">
+                	<div id="container-full-tree-map-Value" style="width:100%;height:680px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item vol">
+                	<div id="container-full-tree-map-Volume" style="width:100%;height:680px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item mcap">
+                	<div id="container-full-tree-map-Mcap" style="width:100%;height:680px"></div>
+                </div>
+            </div>
+         </div>
+    	</div>    
+    </div>   
+    </section>                             
+
+    <!--Footer Panel-->
+    <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--Footer Panel-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/acmeticker.min.js"></script>
+    <script src="js/endlessRiver.js"></script>
+    <script src="js/custom.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="js/customChart.js"></script>
+    <script th:inline="javascript">
+    	$(function() {
+        	var tickers = /*[[${tickers}]]*/ [];	
+        	autocomplete(document.getElementById("myInput"), tickers);
+        	
+        	var input = document.getElementById("myInput");
+        	input.addEventListener("keyup", function(event) {
+        	  if (event.keyCode === 13) {
+        	   event.preventDefault();
+        	   document.getElementById("myButton").click();
+        	  }
+        	});
+      });
+	</script>
+	<script>
+        window.setInterval('refresh()', 5 * 60 * 1000); // Call a function every 10000 milliseconds (OR 10 seconds).
+        // Refresh or reload page.
+        function refresh() {
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>

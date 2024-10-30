@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Stock Analysis</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/slick.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/slick-theme.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="css/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="scss/style.css">      
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>    
+</head>
+<body>
+    <!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends!-->
+
+    <div class="content"></div>
+    <!--Header Panel-->
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="main-nav">
+        <div class="container">
+            <a class="navbar-brand" href="javascript:void(0)"><img src="images/logo.png" alt="" title=""/></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mynavbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/who-we-are/">Who We Are</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/mutual-fund/">What We Do</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/funds/">Funds</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/insights/">Insights & Article</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/press-room/">Press Releases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/gallery/">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/events/">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/unpaid/">Cmsf</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Analyzer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/login/">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="header-area">
+    	<div class="logo-stock-area">
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-lg-3 col-md-5 col-sm-4">
+                        <div class="head-top-date-area" id="curDateTime"></div>
+                        <div class="align-items-center">
+                            <div class="d-flex justify-content-start">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" style="font-size:13px; padding-top:1.5%" class="bg-danger pointer btn-dse">DSE</button>                                    
+                                        <button type="button" class="" th:classappend="${marketOpen} ? 'btn btn-success no-btn' : 'btn btn-danger no-btn'" 
+                                        	th:text="${marketOpen} ? 'OPEN' : 'CLOSED'"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-7 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo" class="position-relative">
+                                            <li class="" th:each = "ticker: ${tickerData}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate">
+                                                    <a th:href="@{/company/{code}(code=${ticker.code})}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p> 
+                                                            	<img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	<img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg nav-menu-area">
+            <div class="container">                
+                <a href="https://www.youtube.com/c/LRGlobalBangladeshChannel" class="youtube" title="Go to Our Youtube Channel" target="_blank">
+                    <i class="fa fa-play"></i>
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">
+                                <img class="normal-menu-icon img-fluid" src="images/home-icon.png" alt="Home Icon">
+                                <img class="hover-menu-icon img-fluid" src="images/home-icon-hover.png" alt="Home Icon"> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/increase-graph-profit.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/increase-graph-profit-hover.png" alt=""> Markets
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/equity_market">Equity Market</a></li>
+                                <li><a class="dropdown-item" href="/debt_board">Debt Board</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/economy" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-hover.png" alt=""> Economy
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/research" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy-grow.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-grow-hover.png" alt=""> Research
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/stock_analysis" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/stock-analysis.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/stock-analysis-hover.png" alt=""> Analysis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my_finance" role="button">
+                                <img class="normal-menu-icon img-fluid" src="images/my-finance-icon.png" alt="My Finance">
+                                <img class="hover-menu-icon img-fluid" src="images/my-finance-icon-hover.png" alt="My Finance"> My Finance
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="d-flex search-form-container" method="GET" action="/companyBySearch" autocomplete="off">
+                        <div class="position-relative autocomplete">
+                            <input class="form-control search-input me-2" type="search" id="myInput"
+                            	placeholder="Search" aria-label="Search" name="ticker">
+                            <button id="myButton"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!--Header Panel-->
+    
+<div id="analysis-container" class="market-stanalysis">
+    <!-- page name panel -->
+    <section class="company-top-area">
+        <div class="container-fluid">
+            <div class="compny-top-inner">
+                <ul class="d-flex">
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid" src="images/stock-analysis-icon.png" alt="stock analysis">
+                            <span><strong>Stock Analysis</strong></span>
+                        </div>
+                    </li>
+                    <li></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <!-- page name panel ends! -->
+
+    <!-- date range/refresh section -->
+    <section class="stock-xchnge-area">
+        <div class="container-fluid">
+            <div class="row align-items-stretch">
+                <div class="col-12">
+                    <div class="stanalysis-content">
+                        <form class="ticker-select">
+                            <div class="row">
+                                <label class="col-sm-7 col-form-label">Benchmark Ticker:</label>
+                                <div class="col-sm-5 no-padding">
+                                    <select class="form-select" aria-label=".form-select example" id="benchmarkTicker">
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="stanalysis-range-content">
+                            <!-- benchmark ticker content -->
+                            <form class="benchmark-ticker">
+                                <label for="exampleDataList" class="form-label font-14">Ticker:</label>
+                                <select name="field2" id="field2" multiple="multiple" multiselect-search="true" multiselect-select-all="true"
+                                    multiselect-max-items="8">                           
+                                </select>
+                            </form>
+                            <!-- benchmark ticker content ends!-->
+                            <!-- Date range picker content -->
+                            <form class="date-range">
+                                <div class="position-relative" style="width:100% !important;">
+                                    <label for="exampleDataList" class="form-label font-14">Date Range:</label>
+                                    <input id="reportrange" class="date-range-inpt">
+                                    <i class="fa fa-calendar mob-icon"></i>
+                                    <span></span> <b class="caret"></b>
+                                </div>                            	
+                            </form>
+                            <!-- Date range picker content ends! -->
+                            <!-- refresh button -->
+                            <div class="refresh-btn-container">
+                                <button type="button" class="btn btn-outline-warning" onClick="generateChart()">Refresh</button>
+                            </div>
+                            <!-- refresh button ends! -->
+                        </div>
+                    </div>  
+                </div>              
+            </div>
+        </div>
+    </section>    
+    <!-- date range/refresh section ends! -->
+
+    <!--Chart table Panel-->
+    <section class="stanalysis-chart-container">
+        <div class="container-fluid">
+            <div class="row align-items-stretch">
+                <div class="col-lg-12 col-md-12 col-xs-12 cstm-margin">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/timeseries-chart-icon.png" alt="Timeseries Chart"> -->
+                                Timeseries Chart
+                            </h2>
+                        </div>
+                        <div class="stock-card-body">
+                            <div class="panel-content text-center">
+                                <div id="time-series" style="width:100%;height:480px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 
+                <div class="col-lg-6 col-md-12 col-xs-12 cstm-margin">
+	            	<div class="stock-card-panel">
+	                    <div class="stock-card-header d-flex justify-content-between align-items-center">
+	                        <h2>
+	                            <img class="img-fluid" src="images/returns-chart-icon.png" alt="Returns Chart">Price Chart
+	                        </h2>
+	                    </div>
+	                    <div class="stock-card-body">
+	                        <div class="panel-content text-center">
+	                        	<div id="container-returns" style="width:100%;height:350px"></div>
+	                        </div>
+	                    </div>
+	               </div>
+	            </div> -->
+            </div>           
+	        <div class="row align-items-stretch mt-4">
+	            <div class="col-lg-12 col-md-12 col-xs-12 cstm-margin">
+	            	<div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/datatable-icon.png" alt="Data Table"> -->
+                                Data Table
+                            </h2>
+                        </div>
+                        <div class="stock-card-body">
+                            <div class="panel-content text-center">
+                                <div id="datatable-chart" style="width:100%;height:auto;"></div>
+                            </div>
+                        </div>
+                    </div>
+	            </div>
+	        </div>
+        </div>
+    </section>
+    <!--Chart table Panel-->
+    </div>
+
+    <!--Footer Panel-->
+    <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--Footer Panel-->
+
+    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/multiselect-dropdown.js"></script>
+    <script type="text/javascript" src="js/slick.min.js"></script>
+    <script type="text/javascript" src="js/acmeticker.min.js"></script>
+    <script type="text/javascript" src="js/endlessRiver.js"></script>
+    <script type="text/javascript" src="js/custom.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/highcharts.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script type="text/javascript" src="js/moment.min.js"></script>
+    <script type="text/javascript" src="js/daterangepicker.js"></script>
+    <script type="text/javascript" src="js/comparisonChart.js"></script>
+    <script type="text/javascript" src="js/customChart.js"></script>
+    <script type="text/javascript" src="js/stock_analysis.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            var start = moment().subtract(3, "month");
+            var end = moment();
+            function cb(start, end) {
+                $("#reportrange span").html(
+                    start.format("MMMM D, YYYY") + " - " + end.format("MMMM D, YYYY")
+                );
+            }
+            $("#reportrange").daterangepicker(
+                {
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        "Last 3 month": [moment().subtract(3, "month"), moment()],
+                        "Last 6 month": [moment().subtract(6, "month"), moment()],
+                        "Last 12 month": [moment().subtract(12, "month"), moment()],
+                        "Last 3 year": [moment().subtract(3, "year"), moment()],
+                        "Last 5 year": [moment().subtract(5, "year"), moment()],
+                        "Last 7 year": [moment().subtract(7, "year"), moment()],
+                        "Last 9 year": [moment().subtract(9, "year"), moment()],
+                    },
+                },
+                cb
+            );
+            cb(start, end);
+        });
+    </script>   
+     <script>
+     	setInterval(function(){
+			var ct = new Date();
+ 				document.getElementById("curDateTime").innerHTML = ct.getDate()+' '+ct.toLocaleString('en-us', { month: 'short' })
+ 				+' '+ct.toLocaleString('en-us', { year: 'numeric' })+',  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+	 	}, 1000);
+    </script>
+    <script th:inline="javascript">
+    	$(function() {
+        	var tickers = /*[[${tickers}]]*/ [];   	
+        	autocomplete(document.getElementById("myInput"), tickers);
+        	
+        	var input = document.getElementById("myInput");
+        	input.addEventListener("keyup", function(event) {
+        	  if (event.keyCode === 13) {
+        	   event.preventDefault();
+        	   document.getElementById("myButton").click();
+        	  }
+        	});
+      });
+	</script>
+	<script th:inline="javascript">
+		$(function createList() {
+	    	var tickers = /*[[${tickers}]]*/ [];  
+	    	tickers = createTickerList(tickers);
+	    	
+	    	var select = document.getElementById('field2');
+	    	for(var ticker in tickers){
+	    		var opt = document.createElement('option');
+	   		 	opt.value = tickers[ticker];
+	    	    opt.innerHTML = tickers[ticker];
+	    	    select.appendChild(opt);
+	    	}
+	    	//console.log(select);
+	  });   	
+	</script>
+	<script th:inline="javascript">
+    	$(function() {
+        	var tickers = /*[[${tickers}]]*/ [];   	
+        	tickers = createTickerList(tickers);
+	    	
+        	var select = document.getElementById('benchmarkTicker');
+	    	for(var ticker in tickers){
+	    		var opt = document.createElement('option');
+	   		 	opt.value = tickers[ticker];
+	    	    opt.innerHTML = tickers[ticker];
+	    	    select.appendChild(opt);
+	    	}
+      });
+    	$("benchmarkTicker").select2();
+	</script>
+	<script type="text/javascript">
+            function generateChart(callback) {
+            	var tickers = $('#field2').val();
+            	var date_range = $('#reportrange').val();
+            	var bmTicker = $('#benchmarkTicker').val();
+            	
+            	date_range = getModifiedDateRange(tickers,date_range,bmTicker);
+            	var tickDiff = getTickDifference(date_range);
+            	var resultObj = getResultObject(tickers,date_range,bmTicker);
+            	
+            	var indices = resultObj.indices;
+            	var priceArray = resultObj.priceArray;
+            	var dateDtls = resultObj.dateDtls;
+            	var volumeArray = resultObj.volumeArray;
+            	var modifiedPriceArray = resultObj.modifiedPriceArray;
+            	var indicatorHeading = resultObj.indicatorHeading;
+            	var indicatorDataArray = resultObj.indicatorDataArray;
+            	
+            	if(tickers.length==1){
+            		if(indices.includes(tickers[0])){
+            			drawPriceSeriesChartForOne(priceArray,tickers,dateDtls[0],tickDiff);
+            		}else{
+            			drawChartForPriceVolume(dateDtls[0], priceArray[0], volumeArray[0],'time-series',tickDiff);
+            		}
+            		//drawPriceSeriesChartForOne(priceArray,tickers,dateDtls,tickDiff);
+            		//drawReturnSeriesChartForOne(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForOne(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==2){
+            		var j = dateDtls[0].length>dateDtls[1].length ? 0 : 1;
+            		drawPriceSeriesChartForTwo(modifiedPriceArray,tickers,dateDtls[j],tickDiff);
+            		//drawReturnSeriesChartForTwo(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForTwo(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==3){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForThree(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForThree(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForThree(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}
+            		//drawReturnSeriesChartForThree(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForThree(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==4){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForFour(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForFour(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForFour(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForFour(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}           		
+            		//drawReturnSeriesChartForFour(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForFour(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==5){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length,dateDtls[4].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForFive(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForFive(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForFive(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForFive(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}else if(j==dateDtls[4].length){
+            			drawPriceSeriesChartForFive(modifiedPriceArray,tickers,dateDtls[4],tickDiff);
+            		}
+            		//drawReturnSeriesChartForFive(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForFive(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==6){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length,
+            				dateDtls[4].length,dateDtls[5].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}else if(j==dateDtls[4].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[4],tickDiff);
+            		}else if(j==dateDtls[5].length){
+            			drawPriceSeriesChartForSix(modifiedPriceArray,tickers,dateDtls[5],tickDiff);
+            		}
+            		//drawReturnSeriesChartForFive(returnArray,tickers,dateDtls,tickDiff);
+            		drawTableChartForSix(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==7){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length,dateDtls[4].length,
+            				dateDtls[5].length,dateDtls[6].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}else if(j==dateDtls[4].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[4],tickDiff);
+            		}else if(j==dateDtls[5].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[5],tickDiff);
+            		}else if(j==dateDtls[6].length){
+            			drawPriceSeriesChartForSeven(modifiedPriceArray,tickers,dateDtls[6],tickDiff);
+            		}
+            		drawTableChartForSeven(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==8){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length,dateDtls[4].length,
+            				dateDtls[5].length,dateDtls[6].length,dateDtls[7].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}else if(j==dateDtls[4].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[4],tickDiff);
+            		}else if(j==dateDtls[5].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[5],tickDiff);
+            		}else if(j==dateDtls[6].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[6],tickDiff);
+            		}else if(j==dateDtls[7].length){
+            			drawPriceSeriesChartForEight(modifiedPriceArray,tickers,dateDtls[7],tickDiff);
+            		}
+            		drawTableChartForEight(indicatorHeading,indicatorDataArray,tickers);
+            	}else if(tickers.length==9){
+            		var j = Math.max(dateDtls[0].length,dateDtls[1].length,dateDtls[2].length,dateDtls[3].length,dateDtls[4].length,
+            				dateDtls[5].length,dateDtls[6].length,dateDtls[7].length,dateDtls[8].length);
+            		if(j==dateDtls[0].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[0],tickDiff);
+            		}else if(j==dateDtls[1].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[1],tickDiff);
+            		}else if(j==dateDtls[2].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[2],tickDiff);
+            		}else if(j==dateDtls[3].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[3],tickDiff);
+            		}else if(j==dateDtls[4].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[4],tickDiff);
+            		}else if(j==dateDtls[5].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[5],tickDiff);
+            		}else if(j==dateDtls[6].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[6],tickDiff);
+            		}else if(j==dateDtls[7].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[7],tickDiff);
+            		}else if(j==dateDtls[7].length){
+            			drawPriceSeriesChartForNine(modifiedPriceArray,tickers,dateDtls[8],tickDiff);
+            		}
+            		drawTableChartForNine(indicatorHeading,indicatorDataArray,tickers);
+            	}               	
+            };
+	</script>
+</body>
+</html>

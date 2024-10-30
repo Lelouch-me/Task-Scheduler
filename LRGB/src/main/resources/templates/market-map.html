@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Market Map</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/slick.min.css" />
+    <link rel="stylesheet" href="css/slick-theme.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="scss/style.css">
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+    <script type="text/javascript">
+	    setInterval(function(){
+	    	var ct = new Date();
+	        document.getElementById("curDateTime").innerHTML = ct.getDate()+' '+ct.toLocaleString('en-us', { month: 'short' })
+	        +' '+ct.toLocaleString('en-us', { year: 'numeric' })+',  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+	        document.getElementById("curTime").innerHTML = 'Time:  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+	    }, 1000);
+    </script>
+</head>
+<body>    
+    <!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends! -->
+    
+    <div class="content"></div>
+    <!--Header Panel-->
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="main-nav">
+        <div class="container">
+            <a class="navbar-brand" href="https://www.lrglobalbd.com/"><img src="images/logo.png" alt="" title=""/></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mynavbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/who-we-are/">Who We Are</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/mutual-fund/">What We Do</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/funds/">Funds</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/insights/">Insights & Article</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/press-room/">Press Releases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/gallery/">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/events/">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/unpaid/">Cmsf</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Analyzer</a></li>
+                    <li class="nav-item"><a class="nav-link" href="https://www.lrglobalbd.com/login/">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="header-area">
+    	<div class="logo-stock-area">
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-lg-3 col-md-5 col-sm-4">
+                        <div class="head-top-date-area" id="curDateTime"></div>
+                        <div class="align-items-center">
+                            <div class="d-flex justify-content-start">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" style="font-size:13px; padding-top:1.5%" class="bg-danger pointer btn-dse">DSE</button>                                    
+                                        <button type="button" class="" th:classappend="${marketOpen} ? 'btn btn-success no-btn' : 'btn btn-danger no-btn'" 
+                                        	th:text="${marketOpen} ? 'OPEN' : 'CLOSED'"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-7 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo" class="position-relative">
+                                            <li class="" th:each = "ticker: ${tickerData}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate">
+                                                    <a th:href="@{/company/{code}(code=${ticker.code})}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p> 
+                                                            	<img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	<img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg nav-menu-area">
+            <div class="container">
+            	<a href="https://www.youtube.com/c/LRGlobalBangladeshChannel" class="youtube" title="Go to Our Youtube Channel" target="_blank">
+                    <i class="fa fa-play"></i>
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/">
+                                <img class="normal-menu-icon img-fluid" src="images/home-icon.png" alt="Home Icon">
+                                <img class="hover-menu-icon img-fluid" src="images/home-icon-hover.png" alt="Home Icon"> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/increase-graph-profit.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/increase-graph-profit-hover.png" alt=""> Markets
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">Equity Market</a></li>
+                                <li><a class="dropdown-item" href="/debt_board">Debt Board</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/economy" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-hover.png" alt=""> Economy
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/research" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy-grow.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-grow-hover.png" alt=""> Research
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/stock_analysis" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/stock-analysis.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/stock-analysis-hover.png" alt=""> Analysis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my_finance" role="button">
+                                <img class="normal-menu-icon img-fluid" src="images/my-finance-icon.png" alt="My Finance">
+                                <img class="hover-menu-icon img-fluid" src="images/my-finance-icon-hover.png" alt="My Finance"> My Finance
+                            </a>
+                        </li>
+                        <!-- 
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/research-and-development.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/research-and-development-hover.png" alt=""> Our Research
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="#">IPO Note</a></li>
+                                <li><a class="dropdown-item" href="#">Company Equity Note</a></li>
+                                <li><a class="dropdown-item" href="#">Sector Report</a></li>
+                                <li><a class="dropdown-item" href="#">Daily Market Update</a></li>
+                                <li><a class="dropdown-item" href="#">Mid Day Market Update</a></li>
+                                <li><a class="dropdown-item" href="#">Weekly Update</a></li>
+                                <li><a class="dropdown-item" href="#">Monthly Report</a></li>
+                            </ul>
+                        </li> -->
+                    </ul>
+                    <form class="d-flex search-form-container" method="GET" action="/companyBySearch" autocomplete="off">
+                        <div class="position-relative autocomplete">
+                            <input class="form-control search-input me-2" type="search" id="myInput"
+                            	placeholder="Search" aria-label="Search" name="ticker">
+                            <button id="myButton"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Header Panel -->
+	<div id="equity-container" class="market-equity">
+    <section class="company-top-area">
+        <div class="container-fluid">
+            <div class="compny-top-inner">
+                <ul class="d-flex">
+                    <li>
+                        <div class="d-flex align-items-center">
+                            <img class="img-fluid" src="images/market-map-icon.png">
+                            <span><strong>Market Map</strong></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="stock-xchnge-area">
+        <div class="container-fluid">
+            <div class="row justify-content-between align-items-center">
+                <div class="col-lg-12">
+                    <h2>Dhaka Stock Exchange</h2>
+                    <ul class="d-flex">
+                        <li th:text = "'Date: ' +${#dates.format(#dates.createNow(), 'dd.MM.yyyy')}"></li>
+                        <!--  <li th:text = "'Time: ' +${#dates.format(#dates.createNow(), 'hh:mm a')}"></li>-->
+                        <li id ="curTime"></li>
+                    </ul>
+                    <div id="disclaimerHead">
+                      <h4> <a href="#disclosure"> <u>See Important Disclosure at the Bottom</a></u>	</h4> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="row justify-content-between align-items-center">
+    	<div class="col-lg-2"></div>
+        <div class="col-lg-8 table-responsive">
+        	<table class="table table-striped table-bordered">
+        		<thead class="table-warning">
+                    <tr>
+                        <th class="text-center" style="width:7%">Index Specific</th>
+                        
+						<th class="text-center" style="width:6%" 
+							title="D/E ratio: It is calculated by dividing a company’s total debt by its shareholder equity for manufacturing companies. On the other hand, for Banks & NBFIs it is calculated by dividing total tier 1 capital by total exposure/total risk-weighted assets. For insurance companies, the leverage ratio is assumed  Net premiums/ shareholders’ equity."
+							>D/E</th>
+							
+                        <th class="text-center" style="width:6%"
+                        	title="Trailing P/E ratio: The trailing P/E is calculated by dividing the current share price by the total EPS over the past 12 months."
+                        	>P/E</th>
+                        	
+                        <th class="text-center" style="width:6%"
+                        	title="P/B ratio: It is calculated by dividing the current share price by the book value per share (BVPS). Basically, it measures the market's valuation of a stock relative to its book value."
+                        	>P/B</th>
+                        	
+                        <th class="text-center" style="width:6%"
+                        	title="P/S ratio: It is calculated by dividing the stock price by the underlying company's total sales per share over the past 12 months. It shows how much investors are willing to pay per dollar of sales for a stock."
+                        	>P/S</th>    
+                        	
+                        <th class="text-center" style="width:6%"
+                        	title="EPS: It is calculated as a company's net profit divided by the outstanding shares of its common stock."
+                        	>EPS (Avg)</th>  
+                        	
+                        <th class="text-center" style="width:7%">EPS (1Y Change)</th>
+                        
+                        <th class="text-center" style="width:7%"
+                        	title="EPS CAGR: It means the cumulative average growth rate of the earnings per share (EPS) over a period."
+                        	>EPS (3Y CAGR)</th> 
+                        	
+                        <th class="text-center" style="width:7%"
+                        	title="Dividend Yield: It is a financial ratio expressed as a percentage that shows how much a company pays out in dividends each year relative to its stock price."
+                        	>Wtd. Dvd Yield</th>
+                        	
+                        <th class="text-center" style="width:7%"
+                        	title="Return: A holding period return is an investment's return over the time it is owned by a particular investor. It is the percentage change between the current price of a stock and the beginning price of the stock from the holding period."
+                        	>Daily Return</th>
+                        	
+                        <th class="text-center" style="width:7%">1M Return</th>
+                        <th class="text-center" style="width:7%">3M Return</th>
+                        <th class="text-center" style="width:7%">6M Return</th>    
+                        <th class="text-center" style="width:7%">1Y Return</th>
+                        
+                        <th class="text-center" style="width:7%"
+                        	title="Up/Down Ratio: The upside/downside ratio is the volume traded in advancing vs. declining issues on a given trading day."
+                        	>Up/Down Ratio</th>           
+                    </tr>
+                    <tr>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;">DSEX</th> 
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('DE')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('PE')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('PB')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('PS')}"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('EPS')}"></th>    
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('EPSYoY')}+ '%'"></th>     
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('EPSCagr')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('DvdYield')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('dailyReturn')}+ '%'"></th>     
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('1MReturn')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('3MReturn')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('6MReturn')}+ '%'"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('1YReturn')}+ '%'"></th>       
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dsexRatios.get('UpDownRatio')}"></th>                                       
+                    </tr>
+                    <tr>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;">DS30</th> 
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('DE')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('PE')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('PB')}"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('PS')}"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('EPS')}"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('EPSYoY')}+ '%'"></th>     
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('EPSCagr')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('DvdYield')}+ '%'"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('dailyReturn')}+ '%'"></th>     
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('1MReturn')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('3MReturn')}+ '%'"></th>
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('6MReturn')}+ '%'"></th>  
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('1YReturn')}+ '%'"></th>        
+                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" th:text="${dse30Ratios.get('UpDownRatio')}"></th>                                   
+                    </tr>
+                </thead>
+            </table>       
+        </div>
+        <div class="col-lg-2"></div>
+        </div>
+
+    <!-- Chart table Panel -->
+    <section class="total-chart-table-area stck-exchnge-table-area">
+        <div class="container-fluid">
+            <div id="macy-container" class="macy-masonary clearfix">
+                <div class="macy-item" th:each="entry, stats : ${sectorDataCountMap}">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header bg-white">
+                            <div class="row align-items-center" style="background-color:#ACDDDE">
+                                <div class="col-sm-6">
+                                    <h4 th:text="${entry.key}"></h4>
+                                    <h6 th:style="${sectorReturn.get(entry.key)>0 ? 'color:#008000' : 'color:#FF0000'}" th:text="${sectorReturn.get(entry.key)}+ '%'"></h6>
+                                </div>
+                                <div class="col-sm-6 mb-0 pt-1 pt-sm-0 stock-top-right-area">
+                                    <div class="row text-center">
+                                        <div class="col-4 px-sm-1">
+                                            <label class="bg-secondary text-white d-block text-uppercase mb-1">Total</label>
+                                            <label class="bg-success text-white d-block text-uppercase">UP</label>
+                                        </div>
+                                        <div class="col-2 px-sm-1">
+                                            <p class="mb-1"><strong th:text="${entry.value[0]}"></strong></p>
+                                            <p class="m-0"><strong th:text="${entry.value[1]}"></strong></p>
+                                        </div>
+                                        <div class="col-4 px-sm-1">
+                                            <label
+                                                class="bg-warning text-white d-block text-uppercase mb-1">FLAT</label>
+                                            <label class="bg-danger text-white d-block text-uppercase">DOWN</label>
+                                        </div>
+                                        <div class="col-2 px-sm-1">
+                                            <p class="mb-1"><strong th:text="${entry.value[3]}"></strong></p>
+                                            <p class="m-0"><strong th:text="${entry.value[2]}"></strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive cement-table">
+                            <table id="exampletableSorting" class="table table-striped table-bordered">
+                                <thead class="table-warning">
+                                	<tr>
+                                        <th>Sector</th>
+                                        <th colspan="3" class="text-center">Weighted Mcap</th>
+										<th class="text-center"
+											title="D/E ratio: It is calculated by dividing a company’s total debt by its shareholder equity for manufacturing companies. On the other hand, for Banks & NBFIs it is calculated by dividing total tier 1 capital by total exposure/total risk-weighted assets. For insurance companies, the leverage ratio is assumed  Net premiums/ shareholders’ equity."
+											>D/E</th>
+                                        <th class="text-center"
+                                        	title="Trailing P/E ratio: The trailing P/E is calculated by dividing the current share price by the total EPS over the past 12 months."
+                                        	>P/E</th>
+                                        <th class="text-center"
+                                        	title="P/B ratio: It is calculated by dividing the current share price by the book value per share (BVPS). Basically, it measures the market's valuation of a stock relative to its book value."
+                                        	>P/B</th>
+                                        <th class="text-center"
+                                        	title="P/S ratio: It is calculated by dividing the stock price by the underlying company's total sales per share over the past 12 months. It shows how much investors are willing to pay per dollar of sales for a stock."
+                                        	>P/S</th>    
+                                        <th class="text-center"
+                                        	title="EPS: It is calculated as a company's net profit divided by the outstanding shares of its common stock."
+                                        	>EPS</th>   
+                                        <th class="text-center">EPS (1Y Change) (%)</th>
+                                        <th class="text-center"
+                                        	title="EPS CAGR: It means the cumulative average growth rate of the earnings per share (EPS) over a period."
+                                        	>EPS (3Y CAGR) (%)</th> 
+                                        <th class="text-center"
+                                        	title="Dividend Yield: It is a financial ratio expressed as a percentage that shows how much a company pays out in dividends each year relative to its stock price."
+                                        	>Wtd. Dvd Yield (%)</th>
+                                        <th class="text-center"
+                                        	title="Daily Volume: It means how many shares are traded per day."
+                                        	>Daily Vol (mn)</th>
+                                        <th class="text-center">3M Avg Vol (mn)</th>    
+                                    </tr>
+                                	<tr>
+                                		<th colspan="1" class="text-left" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${entry.key}=='Pharmaceuticals' ? 'Pharma' : ${entry.key}">
+                                        </th> 
+                                        
+                                        <th colspan="3" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${weightedMcap.get(entry.key)+'%'}">
+                                        </th> 
+                                        
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${sectoralDE.get(entry.key)}">
+                                        </th>
+                                        	
+                                        <th colspan="1" class="text-center" style="font-weight:400;" 
+                                        	th:style = "${sectoralPE.get(entry.key)>=dsexRatios.get('PE')} ? 'color:#FF0000;background-color:#B9F1CE' : 
+                                        		'color:#0000FF;background-color:#B9F1CE'"
+                                        	th:text="${sectoralPE.get(entry.key)>0} ? ${sectoralPE.get(entry.key)} : ''">
+                                        </th>
+                                        
+                                        <th colspan="1" class="text-center" style="font-weight:400;" 
+                                        	th:style = "${sectoralPB.get(entry.key)>=dsexRatios.get('PB')} ? 'color:#FF0000;background-color:#B9F1CE' : 
+                                        		'color:#0000FF;background-color:#B9F1CE'"
+                                        	th:text="${sectoralPB.get(entry.key)}">
+                                        </th>
+                                        	
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:style = "${sectoralPS.get(entry.key)>=dsexRatios.get('PS')} ? 'color:#FF0000;background-color:#B9F1CE' : 
+                                        		'color:#0000FF;background-color:#B9F1CE'"
+                                        	th:text="${sectoralPS.get(entry.key)}">
+                                        </th>
+                                        <th colspan="1" class="text-end" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${sectoralEPS.get(entry.key)}">
+                                        </th>
+                                        
+                                        <th colspan="1" class="text-end" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${sectoralEpsYoy.get(entry.key)}">
+                                        </th>
+                                        
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${sectoralEpsCagr.get(entry.key)}">
+                                        </th>
+                                        
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${sectoralDvdYield.get(entry.key)}">
+                                        </th>
+                                        	
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${#numbers.formatDecimal(sectoralVolume.get(entry.key)/1000000, 0, 'COMMA', 2, 'POINT')}">
+                                        </th>
+                                        <th colspan="1" class="text-center" style="background-color:#B9F1CE;font-weight:400;" 
+                                        	th:text="${#numbers.formatDecimal(sectoral3MonVolume.get(entry.key)/1000000, 0, 'COMMA', 2, 'POINT')}">
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <th>Ticker</th>
+                                        <th class="text-center"
+                                        	title="Fair Value (FV): For the sectors which have at least 10 companies, fair value is the weighted average relative value per share of the company calculated by using respective sector PE (50%), PB (20%) and PS (30%) ratios. 
+For the sectors consisting of less than ten companies, fair value is the weighted average relative value per share of the company calculated by using market PE (50%), PB (20%) and PS (30%) ratios. If P/E ratio is missing for a company, only P/B is used to calculate the Fair Value of that company. If P/E and P/B ratio both are missing for a company, N/A is written in the cell of Fair Value of that company."
+                                        	>FV ☨ (est)</th>
+                                        <th class="text-center"
+                                        	title="LTP: It means the last traded price of the stock."
+                                        	>LTP</th>
+                                        <th class="text-center">Chng (%)</th>
+										<th class="text-center"
+											title="D/E ratio: It is calculated by dividing a company’s total debt by its shareholder equity for manufacturing companies. On the other hand, for Banks & NBFIs it is calculated by dividing total tier 1 capital by total exposure/total risk-weighted assets. For insurance companies, the leverage ratio is assumed  Net premiums/ shareholders’ equity."
+											>D/E</th>
+                                        <th class="text-center"
+                                        	title="Trailing P/E ratio: The trailing P/E is calculated by dividing the current share price by the total EPS over the past 12 months."
+                                        	>P/E</th>
+                                        <th class="text-center"
+                                        	title="P/B ratio: It is calculated by dividing the current share price by the book value per share (BVPS). Basically, it measures the market's valuation of a stock relative to its book value."
+                                        	>P/B</th>
+                                        <th class="text-center"
+                                        	title="P/S ratio: It is calculated by dividing the stock price by the underlying company's total sales per share over the past 12 months. It shows how much investors are willing to pay per dollar of sales for a stock."
+                                        	>P/S</th>    
+                                        <th class="text-center"
+                                        	title="EPS: It is calculated as a company's net profit divided by the outstanding shares of its common stock."
+                                        	>EPS</th>   
+                                        <th class="text-center">EPS (1Y Chng) (%)</th>
+                                        <th class="text-center"
+                                        	title="EPS CAGR: It means the cumulative average growth rate of the earnings per share (EPS) over a period."
+                                        	>EPS (3Y CAGR) (%)</th>    
+                                        <th class="text-center"
+                                        	title="Dividend Yield: It is a financial ratio expressed as a percentage that shows how much a company pays out in dividends each year relative to its stock price."
+                                        	>Dvd Yield (%)</th>   
+                                        <th class="text-center"
+                                        	title="Daily Volume: It means how many shares are traded per day."
+                                        	>Daily Vol (mn)</th>
+                                        <th class="text-center">3M Avg Vol (mn)</th>    
+                                    </tr>
+                                </thead>
+                                <tbody id="id04">
+                                    <tr th:each = "ticker: ${sectorCompanyMap.get(entry.key)}">
+                                        <td><a th:style="${ticker.pe}==null ? 'color:#033E3E' :
+                                        	(${ticker.pe>=sectoralPE.get(entry.key)} ? 'color:#033E3E' : 
+                                        		(${ticker.pb}==null ? 'color:#033E3E' : 
+                                        			(${ticker.pb>=sectoralPB.get(entry.key)} ? 'color:#033E3E' : 
+                                        				(${ticker.ps}==null ? 'color:#033E3E' : 
+                                        					(${sectoralPS.get(entry.key)}==null ? 'color:#033E3E' :
+                                        						(${ticker.ps>=sectoralPS.get(entry.key)} ? 'color:#033E3E' : 'color:#0000FF'))))))"
+                                        	th:href="@{/company/{code}(code=${ticker.code})}" th:text = "${ticker.code}"></a></td>
+                                        
+                                        <td th:style = "${ticker.fairValue==null} ? 'color:#FFFFFF;background-color:#505050' : (${ticker.ltp>=ticker.fairValue} ? 'color:#FF3232;background-color:#505050' : 
+                                        	'color:#9BE317;background-color:#505050')"
+                                        	th:text="${ticker.fairValue==null} ? 'N/A' : ${ticker.fairValue}"></td>
+                                        	
+                                        <td th:text = "${ticker.totalTrades>0} ? ${ticker.ltp} : 'No Trade'"></td>
+                                        <td th:classappend="${ticker.change>0} ? table-greentd : (${ticker.totalTrades>0} ? table-redtd : table-orangetd)"
+                                        	th:text = "${ticker.totalTrades>0} ? ${ticker.changePercent} : 'No Trade'"></td>
+ 
+ 										<td th:style = "${ticker.de>=sectoralDE.get(entry.key)} ? 'color:#FF0000' : 'color:#0000FF'"
+ 											th:text = "${ticker.de}"></td>
+ 										
+                                        <td class="text-center" 
+                                        	th:style = "${ticker.pe>=sectoralPE.get(entry.key)} ? 'color:#FF0000' : 'color:#0000FF'"
+                                        	th:text = "${ticker.pe>0} ? ${ticker.pe} : ''">
+                                        </td>
+                                        <td class="text-center"
+                                        	th:style = "${ticker.pb>=sectoralPB.get(entry.key)} ? 'color:#FF0000' : 'color:#0000FF'"
+                                        	th:text = "${ticker.pb>0} ? ${ticker.pb} : ''">
+                                        </td>
+                                        <td class="text-center"
+                                        	th:style = "${ticker.ps>=sectoralPS.get(entry.key)} ? 'color:#FF0000' : 'color:#0000FF'"
+                                        	th:text = "${ticker.ps>0} ? ${ticker.ps} : ''">
+                                        </td>
+                                        
+                                        <td th:style = "${ticker.eps>=sectoralEPS.get(entry.key)} ? 'color:#0000FF' : 'color:#FF0000'"
+                                        	th:text = "${ticker.eps}"></td>
+                                        	
+                                        <td th:style = "${ticker.epsYoy>=sectoralEpsYoy.get(entry.key)} ? 'color:#0000FF' : 'color:#FF0000'"
+                                        	th:text = "${ticker.epsYoy}"></td>
+                                        	
+                                        <td th:style = "${ticker.epsCagr>=sectoralPE.get(entry.key)} ? 'color:#0000FF' : 'color:#FF0000'"
+                                        	th:text = "${ticker.epsCagr}"></td>
+                                        
+                                        <td th:style = "${ticker.dvdYield>=sectoralDvdYield.get(entry.key)} ? 'color:#0000FF' : 'color:#FF0000'"
+                                        	th:text = "${ticker.dvdYield}"></td>
+                                        
+                                        <td class="text-end" th:style = "${ticker.publicTotalVolume>=threeMonAvgVol.get(ticker.code)} ? 'color:#0000FF' : 'color:#FF0000'" 
+                                        	th:text = "${#numbers.formatDecimal(ticker.publicTotalVolume/1000000, 0, 'COMMA', 2, 'POINT')}"></td>
+                                        <td class="text-end" th:text = "${#numbers.formatDecimal(threeMonAvgVol.get(ticker.code)/1000000, 0, 'COMMA', 2, 'POINT')}"></td>
+
+                                        <!-- 	
+                                        <td style="text-align: center;" 
+                                        	th:classappend = "${ticker.auditedPe==null} ? '' : 
+                                        		(${ticker.auditedPe>=sectoralPE.get(entry.key)} ? table-redtd-2 : 
+                                        			(${ticker.auditedPe<sectoralPE.get(entry.key)} ? table-bluetd : ''))"
+                                        	th:text = "${ticker.auditedPe}">
+                                        </td>
+                                        <td style="text-align: center;" 
+                                        	th:classappend = "${ticker.pb==null} ? '' : 
+                                        		(${ticker.pb<0} ? '' :
+                                        		(${ticker.pb>=sectoralPB.get(entry.key)} ? table-redtd-2 : 
+                                        			(${ticker.pb<sectoralPB.get(entry.key)} ? table-bluetd : '')))"
+                                        	th:text = "${ticker.pb>0} ? ${ticker.pb} : ''">
+                                        </td>	
+                                        <td style="text-align: center;" 
+                                        	th:classappend = "${ticker.ps==null} ? '' : 
+                                        		(${ticker.ps<0} ? '' :
+                                        		(${sectoralPS.get(entry.key)==null} ? '' :
+                                        		(${ticker.ps>=sectoralPS.get(entry.key)} ? table-redtd-2 : 
+                                        			(${ticker.ps<sectoralPS.get(entry.key)} ? table-bluetd : ''))))"
+                                        	th:text = "${ticker.ps>0} ? ${ticker.ps} : ''">
+                                        </td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Chart table Panel -->
+
+
+	<Section class="mb-4" style="margin-left: 0.5em;padding: 10 7em 7em 10;border-width: 2px; border-color: black; border-style:solid;"> 
+        <div class="footNote-area" >
+             <div class="container-fluid"> 
+                 <div id="disclosure">    
+            		<h4 style="font-family:SFPRODISPLAY-REGULAR;"><u>Disclosure: </u></h4>
+						The fair value is a theoretical estimate calculated based on publicly available
+			 			information obtained from reported financials believed to be reliable, but no guarantee 
+ 						can be provided for the disclosed financial and related information.
+						The published data (theoretical estimate) are for informational purposes
+ 						only and should not be considered as investment advice or a recommendation
+ 						of any particular sector, security, and strategy or investment product. The
+ 						information is provided to create more valuation transparency for general public.
+ 						Please carefully read the assumptions that are used to determine theoretical estimates.
+ 						Theoretical estimates has inherent limitations and do not reflect actual price that are 
+ 						determined by multiple factors including company financials, market liquidity and investors
+ 						perception and outlook. Investments in equity instruments involve risks and potential loss
+ 						of the entire investment amount. Prior to any investment decisions investors must conduct
+ 						detailed research and/or consult professionals.                                 
+         		</div>
+         	</div>
+       	</div>
+    </Section>
+    
+	<Section class="mb-4" style="margin-left: 0.5em;padding: 10 7em 7em 10;border-width: 2px; border-color: black; border-style:solid;"> 
+     <div class="footNote-area">
+         <div class="container-fluid">     
+            <p > 
+            <h4 style="font-family:SFPRODISPLAY-REGULAR;"><u>Note: </u></h4>
+        	<strong><b>Fair Value(FV):</b></strong> For the sectors which have at least 10 companies, fair value is the weighted average relative value per share of the company calculated by using respective sector PE (50%), PB (20%) and PS (30%) ratios. 
+							For the sectors consisting of less than ten companies, fair value is the weighted average relative value per share of the company calculated by using market PE (50%), PB (20%) and PS (30%) ratios. 
+								If P/E ratio is missing for a company, only P/B is used to calculate the Fair Value of that company. 
+									If P/E and P/B ratio both are missing for a company, N/A is written in the cell of Fair Value of that company.<br>
+         	<strong><b>Trailing P/E ratio:</b></strong> The trailing P/E is calculated by dividing the current share price 
+         	 by the total EPS over the past 12 months.<br>
+        	 <strong><b>P/B ratio: </b></strong> It is calculated by dividing the current share price by 
+         	 the book value per share (BVPS). Basically, it measures the
+         	 market's valuation of a stock relative to its book value.<br>
+        	 <strong><b>P/S ratio:</b></strong>  It is calculated by dividing the stock price by the
+             underlying company's total sales per share over the past 12 months. It shows how much investors are 
+             willing to pay per dollar of sales for a stock.<br>
+             <strong><b>D/E ratio:</b></strong> It is calculated by dividing a company’s total debt
+             by its shareholder equity for manufacturing companies. On the other hand, for Banks & NBFIs
+             it is calculated by dividing total tier 1 capital by total exposure/total risk-weighted 
+             assets.For insurance companies, the leverage ratio is assumed  Net premiums/ shareholders’ equity.<br> 
+             <strong><b>EPS:</b></strong> It is calculated as a company's net profit divided
+             by the outstanding shares of its common stock.<br>
+             <strong><b>Dividend Yield:</b></strong>  It is a financial ratio expressed as a percentage that shows how much a company
+             pays out in dividends each year relative to its stock price.<br>
+             <strong><b>Up/Down Ratio:</b></strong>The upside/downside ratio is the volume
+             traded in advancing vs. declining issues on a given trading day.<br> 
+             <strong><b>Return:</b></strong> A holding period return is an investment's return over the time it is owned by
+             a particular investor. It is the percentage change
+             between the current price of a stock and the beginning price of the stock from the holding period.<br>
+             <strong><b>Daily Volume:</b></strong> It means how many shares are traded per day.<br>
+             <strong><b>EPS CAGR: </b></strong>  It means the cumulative average growth 
+             rate of the earnings per share (EPS) over a period.<br>
+             <strong><b>LTP:</b></strong> It means the last traded price of the stock.<br>                                  
+           </p>
+         </div>
+        </div>
+    </Section>
+    
+    <div class="container-fluid">
+            <h4> <a href="#disclaimerHead"> <u>Back to The Top</a></u>	</h4> 
+     </div>
+   </div>
+    
+    
+    <!--Footer Panel-->
+    <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--Footer Panel-->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/acmeticker.min.js"></script>
+    <script src="js/endlessRiver.js"></script>
+    <script src="js/macy.js"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.11.4/sorting/any-number.js"></script> 
+    <script src="js/custom.js"></script>
+    <script>
+        var masonry = new Macy({
+            container: '#macy-container',
+            trueOrder: false,
+            waitForImages: false,
+            useOwnImageLoader: false,
+            debug: true,
+            mobileFirst: true,
+            columns: 1,
+            margin: {
+                y: 16,
+                x: '0.5%',
+            },
+            breakAt: {
+            	1600: 3,
+                1350: 2,
+                1200: 2,
+                992: 1,
+                767: 1,
+                400: 1
+            },
+        });
+    </script>
+    <script th:inline="javascript">
+    	$(function() {
+        	var tickers = /*[[${tickers}]]*/ [];
+        	console.log(tickers);   	
+        	autocomplete(document.getElementById("myInput"), tickers);
+        	
+        	var input = document.getElementById("myInput");
+        	input.addEventListener("keyup", function(event) {
+        	  if (event.keyCode === 13) {
+        	   event.preventDefault();
+        	   document.getElementById("myButton").click();
+        	  }
+        	});
+      });
+	</script>
+	<script>
+        window.setInterval('refresh()', 5 * 60 * 1000); // Call a function every 10000 milliseconds (OR 10 seconds).
+        // Refresh or reload page.
+        function refresh() {
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>

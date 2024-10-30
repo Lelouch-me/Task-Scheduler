@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Login</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="scss/style.css">      
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>
+</head>
+<body>
+    <!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends!-->
+
+	<!-- Header Panel For Login -->
+    <header class="header-area">
+        <div class="logo-stock-area">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12  align-item-center justify-content-center">
+                        <h1 class="logo-area">
+                            <a href="/">
+                                <img class="img-fluid" width="158" height="68" src="images/logo.png" alt="Logo">
+                            </a>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header Panel -->
+    
+    <!-- error section starts -->
+    <section class="total-chart-table-area">
+        <div class="container text-center py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <form class="login shadow border">
+						<div class="row">
+                            <div class="row mb-3">
+                                <h2>Login to Your Account</h2>
+                            </div>
+							<div class="col-12 mb-3">
+								<input type="text" class="form-control" placeholder="Enter Email">
+							</div>
+							<div class="col-12 mb-3">
+								<input type="password" class="form-control" placeholder="Enter Password">
+							</div>
+							<div class="col-12 mb-3 frgt-pass-text">
+								<a href="#">Forgot Password?</a>
+							</div>
+							<div class="col-md-12 mb-3">
+								<button class="btn btn-primary py-2 px-5 btn-theme-bg" type="submit" value="LOGIN">LOGIN</button>
+							</div>
+							<div class="col-12 text-center login-social">
+								<p>or login with</p>
+								<a href="#"><img src="images/icon-goggle.png" alt="google" title="google"></a>
+								<a href="#"><img src="images/icon-facebook.png" alt="facebook" title="facebook"></a>
+								<hr>
+								<p>Don’t have an account? <a href="/signup">Signup here</a></p>
+							</div>
+						</div>
+					</form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- error section ends! -->
+
+    <!--Footer Panel-->
+    <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!--Footer Panel-->
+
+    <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript" src="js/custom.js"></script>
+</body>
+</html>

@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Market Analyzer</title>
+    <link  rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/slick.min.css" />
+    <link rel="stylesheet" href="css/slick-theme.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.css" />
+    <link rel="stylesheet" href="scss/style.css">
+    <!--<link rel="stylesheet" href="https://code.highcharts.com/css/highcharts.css" />-->
+    <link rel="stylesheet" href="css/highcharts.css" />
+    <style>
+        .no-js #loader {
+            display: none;
+        }    
+        .js #loader {
+            display: block;
+            position: absolute;
+            left: 100px;
+            top: 0;
+        }    
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+    </style>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>-->
+    <script src="js/jquery.min.js"></script>
+    <!--<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.js"></script>-->
+    <script src="js/modernizr.js"></script>
+</head>
+<body>     
+    <!-- Preloading -->
+    <div class="se-pre-con">
+        <svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+            <circle cx="170" cy="170" r="160" stroke="#F2AF66" />
+            <circle cx="170" cy="170" r="135" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="110" stroke="#4D732A" />
+            <circle cx="170" cy="170" r="85" stroke="#F2AF66" />
+        </svg>
+    </div>
+    <!-- Preloading ends! -->
+    
+   <!--  <div class="content"></div>
+    
+    <div id="includedContent"></div> -->
+    
+    <header class="header-area" style= "margin-top : 0px">
+    	<div class="logo-stock-area">
+            <div class="container">
+                <div class="row mt-2">
+                    <div class="col-lg-3 col-md-5 col-sm-4">
+                        <div class="head-top-date-area" id="curDateTime"></div>
+                        <div class="align-items-center">
+                            <div class="d-flex justify-content-start">
+                                <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" style="font-size:13px; padding-top:1.5%" class="bg-danger pointer btn-dse">DSE</button>                                    
+                                        <button type="button" class="" th:classappend="${marketOpen} ? 'btn btn-success no-btn' : 'btn btn-danger no-btn'" 
+                                        	th:text="${marketOpen} ? 'OPEN' : 'CLOSED'"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-7 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo" class="position-relative">
+                                            <li class="" th:each = "ticker: ${tickerData}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate">
+                                                    <a th:href="@{/company/{code}(code=${ticker.code})}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p> 
+                                                            	<img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	<img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg nav-menu-area">
+            <div class="container">
+                <a href="https://www.youtube.com/c/LRGlobalBangladeshChannel" class="youtube" title="Go to Our Youtube Channel" target="_blank">
+                    <i class="fa fa-play"></i>
+                </a>
+                <button class="navbar-toggler navbar-dark" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="#">
+                                <img class="normal-menu-icon img-fluid" src="images/home-icon.png" alt="Home Icon">
+                                <img class="hover-menu-icon img-fluid" src="images/home-icon-hover.png" alt="Home Icon"> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/increase-graph-profit.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/increase-graph-profit-hover.png" alt=""> Markets
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="/equity_market">Equity Market</a></li>
+                                <li><a class="dropdown-item" href="/debt_board">Debt Board</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link" href="/economy" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-hover.png" alt=""> Economy
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/research" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/economy-grow.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/economy-grow-hover.png" alt=""> Research
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/stock_analysis" role="button" aria-expanded="false">
+                                <img class="normal-menu-icon img-fluid" src="images/stock-analysis.png" alt="">
+                                <img class="hover-menu-icon img-fluid" src="images/stock-analysis-hover.png" alt=""> Analysis
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/my_finance" role="button">
+                                <img class="normal-menu-icon img-fluid" src="images/my-finance-icon.png" alt="My Finance">
+                                <img class="hover-menu-icon img-fluid" src="images/my-finance-icon-hover.png" alt="My Finance"> My Finance
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="d-flex search-form-container" method="GET" action="/companyBySearch" autocomplete="off">
+                        <div class="position-relative autocomplete">
+                            <input class="form-control search-input me-2" type="search" id="myInput"
+                            	placeholder="Search" aria-label="Search" name="ticker">
+                            <button id="myButton"><i class="fa fa-search"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- Header Panel -->
+    
+    <!-- Updated video section -->
+    <section class="total-chart-table-area" style="padding-bottom:0px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h2 class="mb-3 mt-3 main-heading">Latest Market Update</h2>
+                </div>
+            </div>
+            <div id="videos" class="row align-items-stretch">
+            	<div class="col-lg-4 col-md-6" th:each = "videoId: ${videoIdList}">
+            		<div class="stock-video-panel"> 
+            			<div class="video-container">
+    						<iframe width="100%" height="220" th:src="@{https://youtube.com/embed/{code}(code=${videoId})}" title="YouTube video player"
+    							 frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+    						</iframe>
+    					</div>
+    				</div>
+    			</div>
+            </div>
+        </div>
+    </section>
+    <!-- Updated video section ends -->
+    
+    <!-- Chart table Panel -->
+    <section class="total-chart-table-area">
+        <div class="container">
+            <div class="row align-items-stretch">
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/stocks-icon.png"> -->
+                                Market Snippets
+                            </h2>
+                            <select class="bg-theme pointer dse-select" id="index-select">
+                            	<option value="dsex">DSEX</option>
+                                <option value="dses">DSES</option>
+                                <option value="dse30">DSE30</option>
+                            </select>
+                        </div>
+                        <div class="stock-card-body p-0">
+                            <div class="panel-content text-center">
+                                <div class="chart-select-item dsex">
+                                	<div id="container-area-dsex" style="width:100%;height:280px"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stock-card-body p-0">
+                            <div class="panel-content text-center">
+                                <div class="chart-select-item dses">
+                                    <div id="container-area-dses" style="width:100%;height:280px"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stock-card-body p-0">
+                            <div class="panel-content text-center">
+                            	<div class="chart-select-item dse30">
+                                	<div id="container-area-ds30" style="width:100%;height:280px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/graph.png"> -->
+                                Market Movers
+                            </h2>
+                            <div>
+                                <ul class="tabs-dta-tble">
+                                    <li class="tab-link current" data-tab="tab-1">
+                                        <i class="fa fa-long-arrow-up text-green"></i>
+                                    </li>
+                                    <li class="tab-link" data-tab="tab-2">
+                                        <i class="fa fa-long-arrow-down text-red"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="tab-1" class="tab-content-dt-tble current">
+                            <div class="table-responsive market-movers-table">
+                                <table class="table table-bordered">
+                                    <thead class="table-warning">
+                                        <tr>
+                                            <th>Tickers</th>
+                                            <th class="text-end">% Contribution</th>
+                                            <th class="text-end">Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tr th:each = "mover: ${highMarketMoverList}">
+                                    	<td><a th:href="@{/company/{code}(code=${mover.code})}" th:text = "${mover.code}"></a></td>                                   	
+                                    	<td class="text-end" th:text = "${mover.contribution}"></td>
+                                    	<td class="text-end" th:text = "${mover.points}"></td>
+                                	</tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-content-dt-tble">
+                            <div class="table-responsive market-movers-table">
+                                <table class="table table-bordered">
+                                    <thead class="table-warning">
+                                        <tr>
+                                            <th>Tickers</th>
+                                            <th class="text-end">% Contribution</th>
+                                            <th class="text-end">Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tr th:each = "mover: ${lowMarketMoverList}">
+                                    	<td><a th:href="@{/company/{code}(code=${mover.code})}" th:text = "${mover.code}"></a></td>
+                                    	<td class="text-end" th:text = "${mover.contribution}"></td>
+                                    	<td class="text-end" th:text = "${mover.points}"></td>
+                                	</tr>
+                                </table>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/graph-profit.png">  -->
+                                Top Gainers/Losers
+                            </h2>
+                            <div>
+                                <ul class="tabs-dta-tble2">
+                                    <li class="tab-link current" data-tab="tab-3">
+                                        <i class="fa fa-long-arrow-up text-green"></i>
+                                    </li>
+                                    <li class="tab-link" data-tab="tab-4">
+                                        <i class="fa fa-long-arrow-down text-red"></i>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-content-dt-tble2 current">
+                        <div class="table-responsive gainers-table">
+                            <table class="table table-bordered">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th>Tickers</th>
+                                        <th class="text-end">% Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each = "gainer: ${gainerList}">
+                                        <td><a th:href="@{/company/{code}(code=${gainer.code})}" th:text = "${gainer.code}"></a></td>
+                                        <td class="text-end" th:text = "${gainer.priceChangePercent}"></td>
+                                    	</tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="tab-4" class="tab-content-dt-tble2">
+                        <div class="table-responsive gainers-table">
+                            <table class="table table-bordered">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th>Tickers</th>
+                                        <th class="text-end">% Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each = "looser: ${looserList}">
+                                        <td><a th:href="@{/company/{code}(code=${looser.code})}" th:text = "${looser.code}"></a></td>
+                                        <td class="text-end" th:text = "${looser.priceChangePercent}"></td>
+                                    	</tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/data-analysis.png"> -->
+                                Market Matrix
+                            </h2>
+                        </div>
+                        <div class="table-responsive market-matrix-table">
+                            <table class="table table-bordered">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th class="text-left">Index Name</th>
+                                        <th class="text-end">Indices</th>
+                                        <th class="text-end">Points Change</th>
+                                        <th class="text-end">% Change</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each = "index: ${indexList}">
+                                        <td class="text-left" th:text = "${index.id}"></td>
+                                        <td class="text-end" th:text = "${#numbers.formatDecimal(index.capitalValue, 0, 'COMMA', 2, 'POINT')}"></td>
+                                        <td class="text-end" th:text = "${index.deviation}"></td>
+                                        <td class="text-end" th:text = "${index.deviationPercent}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered">
+                            	<thead class="table-warning">
+                            		<tr>
+                                        <th class="text-center"><strong>Total Trade</strong></th>
+                                        <th class="text-center"><strong>Total Volume</strong></th>
+                                        <th class="text-center"><strong>Total Value (mn)</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each = "trade: ${tradeList}">
+                                        <td class="text-center" th:text = "${#numbers.formatDecimal(trade.totalTrades, 0, 'COMMA', 0, 'POINT')}"></td>
+                                        <td class="text-center" th:text = "${#numbers.formatDecimal(trade.totalVolume, 0, 'COMMA', 0, 'POINT')}"></td>
+                                        <td class="text-center" th:text = "${#numbers.formatDecimal(trade.totalValue, 0, 'COMMA', 2, 'POINT')}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-bordered">
+                            	<thead class="table-warning">
+                            		<tr>
+                                        <th class="text-center"><strong>Total Traded</strong></th>
+                                        <th class="text-center"><strong>Issues Advanced</strong></th>
+                                        <th class="text-center"><strong>Issues Declined</strong></th>
+                                        <th class="text-center"><strong>Issues Unchanged</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="text-center" th:text = "${tradeCount[0]}"></td>
+                                        <td class="text-center" th:text = "${tradeCount[1]}"></td>
+                                        <td class="text-center" th:text = "${tradeCount[2]}"></td>
+                                        <td class="text-center" th:text = "${tradeCount[3]}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/market-research-analysis.png"> -->
+                                Sector Return
+                            </h2>
+                        </div>
+                        <div class="stock-card-body">
+                            <div class="panel-content text-center">
+                                <div id="container-bar-return" style="width:100%;height:auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="stock-card-panel">
+                        <div class="stock-card-header d-flex justify-content-between align-items-center">
+                            <h2>
+                                <!-- <img class="img-fluid" src="images/data-analysis.png" alt=""> -->
+                                Sector Turnover
+                            </h2>
+                        </div>
+                        <div class="stock-card-body">
+                            <div class="panel-content text-center">
+                                <div id="container-bar-turnover" style="width:100%;height:auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- tree-map chart section starts
+            <div class="row align-items-stretch">
+                <div class="col-lg-12 col-md-12">
+                    <div class="treemap-container justify-content-center align-items-center">
+                        <div class="header">
+                            <h2>Market Tree Map</h2>
+                            <select class="bg-theme pointer dse-select">
+            					<option value="val">Value</option>
+                				<option value="vol">Volume</option>
+                				<option value="mcap">MarketCap</option>
+            				</select>
+                            <a href="/market_tree_map">
+                                <button type="button" class="btn btn-success">View Full Map</button>
+                            </a>
+                        </div>
+                        <div class="chart-container">
+                            <div id="treemap-container"></div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- tree-map chart section ends! -->
+
+            <div class="stock-card-panel mb-4">
+    		<div class="stock-card-header d-flex justify-content-between align-items-center">
+        		<h2>
+            	Tree Map
+           		</h2>
+            	<select class="bg-theme pointer tree-select" id="treemap-select">
+            	<option value="val">Value (BDT mn)</option>
+                <option value="vol">Volume (BDT mn)</option>
+                <option value="mcap">MarketCap (BDT mn)</option>
+            </select>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item val">
+                	<div id="container-full-tree-map-Value" style="width:100%;height:600px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item vol">
+                	<div id="container-full-tree-map-Volume" style="width:100%;height:600px"></div>
+                </div>
+            </div>
+        </div>
+        <div class="stock-card-body p-0">
+        	<div class="panel-content text-center">
+            	<div class="tree-select-item mcap">
+                	<div id="container-full-tree-map-Mcap" style="width:100%;height:600px"></div>
+                </div>
+            </div>
+         </div>
+    	</div>   
+    	
+    	<div class="stock-card-panel">
+    		<div class="stock-card-header d-flex justify-content-between align-items-center">
+        		<h2>
+            		Foreign Index
+           		</h2>
+        	</div>
+    		<div class="logo-stock-area">
+    			<div class="row">
+    				<div class="col-lg-12 col-md-9 col-sm-8">
+                        <div class="main-scroll-top-area">
+                            <div class="total-top-custom-scroll-br">
+                                <div class="custom-scroll-inner">
+                                    <div class="stock-up-down-area">
+                                        <ul id="demo1" class="position-relative">
+                                            <li class="" th:each = "ticker: ${foreignIndex}">
+                                                <div class="stock-u-d-items" th:classappend="${ticker.change>0} ? stock-up-rate : stock-down-rate" th:title="${ticker.sector}">
+                                                        <div class="stock-head-title-price">
+                                                            <p th:text="${ticker.code}"></p>
+                                                            <p class="font-family-normal ps-2" th:text="${ticker.ltp}"></p>
+                                                            <p> 
+                                                            	<img class="stock-up-arrw" width="10" height="9" src="images/up-arrow-icon.png" alt="">
+                                                            	<img class="stock-down-arrw" width="10" height="9" src="images/down-arrow-icon.png" alt="">
+                                                            </p>
+                                                        </div>
+                                                        <div class="up-down-price-prctg" th:text="${ticker.change +'   ('+ ticker.changePercent}+'%)'"></div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+        </div>
+    </section>
+    <!-- Chart table Panel -->
+
+    <!-- News Panel -->
+    <section class="latest-news-area">
+        <div class="container">
+            <h2 class="text-center">Latest News</h2>
+            <div class="news-tab-area clearfix">
+                <ul class="tabs">
+                    <li class="active" rel="tab1"><a role="tab">Market News</a></li>
+                    <li rel="tab2"><a role="tab">Economy News</a></li>
+                    <li rel="tab4"><a role="tab">International News</a></li>
+                </ul>
+                <div class="tab_container">
+                    <h3 class="d_active tab_drawer_heading" rel="tab1">Market News</h3>
+                    <div id="tab1" class="tab_content">
+                        <div class="news-tab-slider">
+                            <div class="latest-news-item" th:each = "news: ${marketNews}">
+                                <figure>
+                                    <img class="img-fluid" width="288" height="169" th:src="${news.thumbnailUrl}" alt="">
+                                </figure>
+                                <div class="news-descrption">
+                                    <h4 th:text = "${news.title}"></h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="news-date" th:text = "${news.pubDate}"></div>
+                                        </div>
+                                        <div class="col-6">
+                                        	<a class="btn btn-orange" th:href="${news.link}" target="_blank">Read More</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="tab_drawer_heading" rel="tab2">Economy News</h3>
+                    <div id="tab2" class="tab_content">
+                    	<div id="loader3">
+    						<span></span>
+    						<span></span>
+						</div>
+                        <div class="news-tab-slider">
+                            <div class="latest-news-item" th:each = "news: ${economyNews}">
+                                <figure>
+                                    <img class="img-fluid" width="288" height="169" th:src="${news.thumbnailUrl}" alt="">
+                                </figure>
+                                <div class="news-descrption">
+                                    <h4 th:text = "${news.title}"></h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="news-date" th:text = "${news.pubDate}"></div>
+                                        </div>
+                                        <div class="col-6"><a class="btn btn-orange" th:href="${news.link}" target="_blank">Read More</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    <h3 class="tab_drawer_heading" rel="tab4">International News</h3>
+                    <div id="tab4" class="tab_content">
+                        <div class="news-tab-slider">
+                            <div class="latest-news-item" th:each = "news: ${internationalNews}">
+                                <figure>
+                                    <img class="img-fluid" width="288" height="169" th:src="${news.thumbnailUrl}" alt="">
+                                </figure>
+                                <div class="news-descrption">
+                                    <h4 th:text = "${news.title}"></h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="news-date" th:text = "${news.pubDate}"></div>
+                                        </div>
+                                        <div class="col-6"><a class="btn btn-orange" th:href="${news.link}" target="_blank">Read More</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- News Panel -->
+
+    <!--Footer Panel-->
+  <!--  <footer class="footer-area">
+        <div class="container-fluid" id="container-footer">
+            <div class="container">
+                <div class="row" id="footer-custom">
+                    <div class="col-sm-7 col-md-7 text-left">
+                        <div class="row">
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.facebook.com/lrglobalbd" target="_blank"><i class="fa fa-facebook fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.youtube.com/channel/UCeDG4yd51RD004WqUpKTmxg"><i class="fa fa-youtube fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://www.linkedin.com/company/lr-global-bamco/"><i class="fa fa-linkedin fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="https://twitter.com/BangladeshLr"><i class="fa fa-twitter fa-3x"></i></a>
+                            </div>
+                            <div class="col-xs-2 border-fa text-center">
+                                <a href="mailto:info@lrglobalbd.com?Subject=Hello%20LR%20Global%20Bangladesh"><i class="fa fa-envelope fa-3x"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row Press mt-3">
+                            <div class="col-xs-12 text-right">
+                                <a href="https://www.lrglobalbd.com/privacy-policy/">
+                                    <h4>Privacy Policy</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/press-room/">
+                                    <h4>Press Releases</h4>
+                                </a>
+                                <a href="https://www.lrglobalbd.com/careers/">
+                                    <h4>Careers</h4>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="row" id="Footer-Address">
+                    <div class="col-sm-5 col-md-5">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Head Office</h2></div>
+                                <p>Concord I-K Tower</p>
+                                <p>4th Floor, Plot-2, Block-CEN (A)</p>
+                                <p>Gulshan North Avenue, Gulshan-2</p>
+                                <p>Dhaka-1212</p>
+                                <p>Dhaka, Bangladesh</p>
+                                <p>Contact Number : +8802 55052185-8</p>
+                                <p>Fax: +8802-55052183</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div><h2>Investor Relations Office</h2></div>
+                                <p>LR Global BD AMC Ltd.</p>
+                                <p>Mob: +8001730450478-9</p>
+                                <p>Fax: +8802-55052183</p>
+                                <p>E-mail: info@lrglobalbd.com</p>
+                            </div>
+                        </div>
+                
+                        <div class="row">
+                            <br>
+                            <div class="col-xs-12">
+                                <div>
+                                    <span id="Important-Links">Important Links: </span>
+                                    <span><a href="http://www.dsebd.org/">www.dsebd.org</a></span>
+                                    <span>| </span>
+                                    <span><a href="http://www.cse.com.bd/">www.cse.com.bd</a></span>
+                                    <span>| </span>
+                                    <span><a href="https://www.sec.gov.bd/">www.sec.gov.bd</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-sm-7 col-md-7">
+                        <div class="row">
+                            <div class="col-xs-12"><h2 id="globalOffices">Global Offices</h2></div>
+                        </div>
+                        <div class="row"><img id="map" src="images/Global-Offices.png"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer> --> 
+    <!--Footer Panel-->
+    
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/slick.min.js"></script>
+    <script src="js/acmeticker.min.js"></script>
+    <script src="js/endlessRiver.js"></script>
+    <script src="js/custom.js"></script>
+    <!--<script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script type="text/javascript" src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>-->
+    
+    <script src="js/highcharts.js"></script>
+    <script src="js/treemap.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/data.js"></script>
+    <script type="js/exporting.js"></script>
+    <script src="js/export-data.js"></script>
+    <script src="js/customChart.js"></script>
+    <script src="js/apiFunction.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    
+    <script th:inline="javascript">
+    $(function() {
+    	var navBar = document.getElementById('main-nav');
+	//        var requested_ip = /*[[${requestIP}]]*/;
+        
+        // Get the referring URL
+        var referrer = document.referrer;
+        console.log(referrer, window.history);
+
+        // Define the website you want to check for
+        var desiredWebsite = 'thebiz24.com';
+        
+    	/* // Check if the referrer contains the desired website
+        if (referrer.includes(desiredWebsite)) {
+            // If the referrer matches, show the div
+            navBar.style.display = 'none';
+            console.log('redirect from', desiredWebsite);
+        }else{
+        	navBar.style.display = 'block';
+            console.log('redirect from none');
+        } */
+
+    })
+    </script>
+    <script th:inline="javascript">
+    	$(function() {
+        	var tickers = /*[[${tickers}]]*/ [];
+        	//console.log(tickers);   	
+        	autocomplete(document.getElementById("myInput"), tickers);
+        	
+        	var input = document.getElementById("myInput");
+        	input.addEventListener("keyup", function(event) {
+        	  if (event.keyCode === 13) {
+        	   event.preventDefault();
+        	   document.getElementById("myButton").click();
+        	  }
+        	});
+      });
+	</script>
+	<script type="text/javascript">
+		setInterval(function(){
+    		var ct = new Date();
+        	document.getElementById("curDateTime").innerHTML = ct.getDate()+' '+ct.toLocaleString('en-us', { month: 'short' })
+        	+' '+ct.toLocaleString('en-us', { year: 'numeric' })+',  '+(new Date()).toLocaleTimeString('en-us',{ timeZone: "Asia/Dhaka" });
+   	 	}, 1000);
+		
+        window.setInterval('refresh()', 10 * 60 * 1000);// Call a function every 10000 milliseconds (OR 10 seconds).
+        // Refresh or reload page.
+        function refresh() {
+            window.location.reload();
+        }
+    </script>
+    
+    <script type="text/javascript">
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url: getIndexChartDataAPI('DSEX'),
+                    type: 'get',
+                    success: function (result) {
+                        var timeDtls = JSON.parse(result).time;
+                        var valueDtls = JSON.parse(result).capitalValue;
+                        drawAreaChart(timeDtls, valueDtls, 'dsex');
+                    }
+                });
+            });
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url: getIndexChartDataAPI('DSES'),
+                    type: 'get',
+                    success: function (result) {
+                        var timeDtls = JSON.parse(result).time;
+                        var valueDtls = JSON.parse(result).capitalValue;
+                        drawAreaChart(timeDtls, valueDtls, 'dses');
+                    }
+                });
+            });
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url: getIndexChartDataAPI('DS30'),
+                    type: 'get',
+                    success: function (result) {
+                        var timeDtls = JSON.parse(result).time;
+                        var valueDtls = JSON.parse(result).capitalValue;
+                        drawAreaChart(timeDtls, valueDtls, 'ds30');
+                    }
+                });
+            });
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url: getSectorChartDataAPI('sectorTurnover'),
+                    type: 'get',
+                    success: function (result) {
+                        var sector = JSON.parse(result).sector;
+                        var turnover = JSON.parse(result).turnover;
+                        drawBarChart(sector, turnover, 'turnover');
+                        //drawTreeChartForSectorTurnover(sector, turnover);
+                    }
+                });
+            });
+        $(document).ready(
+            function () {
+                $.ajax({
+                    url:  getSectorChartDataAPI('sectorReturn'),
+                    type: 'get',
+                    success: function (result) {
+                        var sector = JSON.parse(result).sector;
+                        var returns = JSON.parse(result).returns;
+                        drawChartForReturn(sector, returns);
+                    }
+                });
+            });
+    </script>
+</body>
+</html>

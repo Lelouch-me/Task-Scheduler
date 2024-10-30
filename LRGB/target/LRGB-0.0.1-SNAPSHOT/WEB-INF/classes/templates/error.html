@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <title>LRG Error Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/font-awesome.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/scss/style.css}">
+</head>
+<body>
+
+    <!-- error section starts -->
+    <section class="total-chart-table-area">
+        <div class="container text-center py-5 my-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <!-- <i class="fa fa-exclamation-triangle error-icon"></i> -->
+                    <span class="error-icon">
+                        <img src="/images/error-img.png">
+                    </span>
+                    <h1 class="display-6">Something went wrong !</h1>
+                    <h1 class="mb-4 not-found-text">Page Not Found</h1>
+                    <p class="mb-4">
+                        We’re sorry, the page you have looked for does not exist in our website! Maybe go to our
+                        home page or try to use a search?
+                    </p>
+                    <a class="btn btn-primary py-3 px-5 btn-theme-bg" href="/">Go Back To Home</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- error section ends! -->
+
+
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script type="text/javascript" th:src="@{/js/custom.js}"></script>
+</body>
+</html>
