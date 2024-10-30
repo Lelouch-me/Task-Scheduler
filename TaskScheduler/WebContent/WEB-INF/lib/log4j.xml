@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<log4j:configuration debug="true">
+
+    <appender name="DiskApp" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="file" value="../logs/kkrDataLoader.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+              <param name="ConversionPattern" value="[%5p][%d{dd-MMM-yy HH:mm:ss}][%c]: %m%n"/>
+      </layout>
+    </appender>
+	
+    <appender name="DiskOthers" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="file" value="../logs/kkrDataLoaderOthers.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+              <param name="ConversionPattern" value="[%5p][%d{dd-MMM-yy HH:mm:ss}][%c]: %m%n"/>
+      </layout>
+    </appender>
+    
+    <appender name="PriceStart" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="file" value="../logs/kkrPriceStart.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+              <param name="ConversionPattern" value="%m%n"/>
+      </layout>
+    </appender>
+    
+    <appender name="PriceComplete" class="org.apache.log4j.DailyRollingFileAppender">
+      <param name="file" value="../logs/kkrPriceComplete.log"/>
+      <layout class="org.apache.log4j.PatternLayout">
+              <param name="ConversionPattern" value="%m%n"/>
+      </layout>
+    </appender>
+
+   <logger name="com.kkr" additivity="false">
+      <level value="ERROR"/>
+      <appender-ref ref="DiskApp"/>
+   </logger>
+   
+   <logger name="PriceStart" additivity="false">
+      <level value="ERROR"/>
+      <appender-ref ref="PriceStart"/>
+   </logger>
+   
+   <logger name="PriceComplete" additivity="false">
+      <level value="ERROR"/>
+      <appender-ref ref="PriceComplete"/>
+   </logger>
+   
+   <root>
+      <priority value="ERROR"/>
+      <appender-ref ref="DiskOthers"/>
+    </root>
+
+</log4j:configuration>

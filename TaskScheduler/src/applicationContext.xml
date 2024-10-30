@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-lazy-init="false">
+  
+  <bean id="taskDao" class="com.kkr.app.dao.impl.TaskDao"/>
+  <bean id="taskService" class="com.kkr.app.service.impl.TaskService">
+  <property name="taskDao" ref="taskDao"></property>
+  </bean>
+  
+  <bean id="marketDataPullService" class="com.kkr.app.service.impl.MarketDataPullService">
+  </bean>
+  
+  <bean id="marketMoverDataCalculateService" class="com.kkr.app.service.impl.MarketMoverDataCalculateService">
+  </bean>
+  
+  <bean id="dseWebScrappingForDailyCompanyInfoService" class="com.kkr.app.service.impl.DSEWebScrappingForDailyCompanyInfoService">
+  </bean>
+
+  <bean id="newspaperWebsiteScrappingService" class="com.kkr.app.service.impl.NewspaperWebsiteScrappingService">
+  </bean>
+  
+  <bean id="performanceMatrixCalculationService" class="com.kkr.app.service.impl.PerformanceMatrixCalculationService">
+  </bean>
+  
+  <bean id="foreignIndexDataScrappingService" class="com.kkr.app.service.impl.ForeignIndexDataScrappingService">
+  </bean>
+  
+   <bean id="foreignIndexDataProcessService" class="com.kkr.app.service.impl.ProcessForeignIndexDataService">
+  </bean>
+  
+  <bean id="processMarketAnnouncementDataService" class="com.kkr.app.service.impl.ProcessMarketAnnouncementDataService">
+  </bean>
+  
+  <bean id="ds30ColumnUpdaterService" class="com.kkr.app.service.impl.DS30ColumnUpdaterService">
+  </bean>
+  
+  <bean id="weeklyMFNAVDataPopulateService" class="com.kkr.app.service.impl.WeeklyMFNAVDataPopulateService">
+  </bean>
+  
+  	
+  </beans>
